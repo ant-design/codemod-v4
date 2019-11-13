@@ -1,0 +1,51 @@
+{
+  "name": "antd-codemod",
+  "version": "0.0.1",
+  "description": "Codemod for ant design upgrade",
+  "keywords": [
+    "ant design",
+    "codemod",
+    "antd"
+  ],
+  "homepage": "https://github.com/ant-design/codemod",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:ant-design/codemod.git"
+  },
+  "bugs": {
+    "url": "http://github.com/ant-design/codemod/issues"
+  },
+  "license": "MIT",
+  "scripts": {
+    "prepublishOnly": "npm run compile && np --yolo --no-publish && npm run gh-pages",
+    "lint": "eslint src/ --ext .ts,.tsx,.jsx,.js,.md",
+    "prettier": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "pretty-quick": "pretty-quick"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "@umijs/fabric": "^1.1.10",
+    "coveralls": "^3.0.6",
+    "cross-env": "^6.0.0",
+    "enzyme": "^3.0.0",
+    "enzyme-adapter-react-16": "^1.0.1",
+    "enzyme-to-json": "^3.4.0",
+    "eslint": "^6.6.0",
+    "husky": "^3.0.9",
+    "np": "^5.1.0",
+    "prettier": "^1.18.2",
+    "pretty-quick": "^2.0.1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  },
+  "cnpm": {
+    "mode": "npm"
+  },
+  "tnpm": {
+    "mode": "npm"
+  }
+}

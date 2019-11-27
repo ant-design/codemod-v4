@@ -1,7 +1,10 @@
 {
-  "name": "antd-codemod",
+  "name": "@ant-design/codemod",
   "version": "0.0.1",
   "description": "Codemod for ant design upgrade",
+  "bin": {
+    "antd-codemod": "bin/antd-codemod.js"
+  },
   "keywords": [
     "ant design",
     "codemod",
@@ -18,24 +21,31 @@
   "license": "MIT",
   "scripts": {
     "prepublishOnly": "npm run compile && np --yolo --no-publish && npm run gh-pages",
-    "lint": "eslint src/ --ext .ts,.tsx,.jsx,.js,.md",
+    "lint": "eslint transforms/ --ext .ts,.tsx,.jsx,.js,.md",
     "prettier": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
-    "pretty-quick": "pretty-quick"
+    "pretty-quick": "pretty-quick",
+    "test": "jest"
   },
   "dependencies": {
+    "@ant-design/compatible": "^0.0.1-alpha.5",
+    "@ant-design/icons": "^4.0.0-alpha.11",
+    "commander": "^4.0.1",
+    "jscodeshift": "^0.6.4"
   },
   "devDependencies": {
     "@umijs/fabric": "^1.1.10",
     "coveralls": "^3.0.6",
     "cross-env": "^6.0.0",
     "enzyme": "^3.0.0",
-    "enzyme-adapter-react-16": "^1.0.1",
     "enzyme-to-json": "^3.4.0",
     "eslint": "^6.6.0",
+    "father": "^2.27.0",
     "husky": "^3.0.9",
+    "jest": "^24.9.0",
     "np": "^5.1.0",
     "prettier": "^1.18.2",
-    "pretty-quick": "^2.0.1"
+    "pretty-quick": "^2.0.1",
+    "typescript": "^3.7.2"
   },
   "husky": {
     "hooks": {

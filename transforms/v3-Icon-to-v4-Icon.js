@@ -5,7 +5,7 @@ const {
 } = require('@ant-design/compatible/lib/icon/utils');
 const allIcons = require('@ant-design/icons/lib/icons');
 
-const { printOptions } = require('./config');
+const { printOptions } = require('./utils/config');
 const {
   removeEmptyModuleImport,
   addSubmoduleImport,
@@ -22,14 +22,14 @@ module.exports = (file, api, options) => {
   const j = api.jscodeshift;
   const root = j(file.source);
 
-  let localModuleName = 'Icon';
+  let localComponentName = 'Icon';
 
   function rewriteOldIconWithImport(j, root) {
     let hasChanged = false;
     // 找到符合条件的 Icon components 通过 '@ant-design/icons' 引入
     // 条件为 type 属性为 string, 且 theme 属性为 string
     // 不符合的一概通过 '@ant-design/compatible' 引入
-    const existedIconComponents = root.findJSXElements(localModuleName);
+    const existedIconComponents = root.findJSXElements(localComponentName);
 
     const targetIconComponents = existedIconComponents
       .find(j.JSXAttribute, {
@@ -89,14 +89,14 @@ module.exports = (file, api, options) => {
         });
 
       if (unconvertableIconComponents.size() > 0) {
-        if (localModuleName !== 'Icon') {
+        if (localComponentName !== 'Icon') {
           // add @ant-design/compatible imports
           addSubmoduleImport(
             j,
             root,
             '@ant-design/compatible',
             'Icon',
-            localModuleName,
+            localComponentName,
           );
           hasChanged = true;
         }
@@ -194,7 +194,7 @@ module.exports = (file, api, options) => {
       )
       .forEach(path => {
         hasChanged = true;
-        localModuleName = path.parent.node.local.name;
+        localComponentName = path.parent.node.local.name;
 
         const importDeclaration = path.parent.parent.node;
         importDeclaration.specifiers = importDeclaration.specifiers.filter(

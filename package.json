@@ -1,5 +1,5 @@
 {
-  "name": "antd-codemod",
+  "name": "@ant-design/codemod",
   "version": "0.0.1",
   "description": "Codemod for ant design upgrade",
   "bin": {

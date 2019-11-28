@@ -5,6 +5,8 @@ A collection of codemod scripts that help upgrade antd v4 using [jscodeshift](ht
 ## Usage samples
 
 ```shell
-npx jscodeshift -t transforms/v3-Icon-to-v4-Icon.js src/**/*.js
-npx jscodeshift -t transforms/v3-Icon-to-v4-Form.js src/**/*.js
+git clone git@github.com:ant-design/codemod.git antd-codemod
+npx jscodeshift -t antd-codemod/transforms/v3-Icon-to-v4-Icon.js src/**/*.js --parser=babylon
+npx jscodeshift -t antd-codemod/transforms/v3-Icon-to-v4-Form.js src/**/*.js --parser=babylon
+npx jscodeshift -t antd-codemod/transforms/v3-LocaleProvider-to-v4-ConfigProvider.js src/**/*.js --parser=babylon
 ```

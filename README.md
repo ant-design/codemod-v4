@@ -9,4 +9,9 @@ git clone git@github.com:ant-design/codemod.git antd-codemod
 npx jscodeshift -t antd-codemod/transforms/v3-Icon-to-v4-Icon.js src/**/*.js --parser=babylon
 npx jscodeshift -t antd-codemod/transforms/v3-Icon-to-v4-Form.js src/**/*.js --parser=babylon
 npx jscodeshift -t antd-codemod/transforms/v3-LocaleProvider-to-v4-ConfigProvider.js src/**/*.js --parser=babylon
+npx jscodeshift -t antd-codemod/transforms/v4-Icon-Outlined.js src/**/*.js --parser=babylon
 ```
+
+**tips**
+
+If you are using typescript, you can use `--parser=tsx` option.

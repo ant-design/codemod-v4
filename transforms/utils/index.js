@@ -106,43 +106,40 @@ function addSubmoduleImport(
     return;
   }
 
+  const newImportSpecifier = j.importSpecifier(
+    j.identifier(importedModuleName),
+    localModuleName ? j.identifier(localModuleName) : null,
+  );
+
+  // if has module imported, just import new submodule from existed
+  // else just create a new import
+  if (hasModuleImport(j, root, pkgName)) {
+    root
+      .find(j.ImportDeclaration, {
+        source: { value: pkgName },
+      })
+      .at(0)
+      .replaceWith(({ node }) => {
+        const mergedImportSpecifiers = node.specifiers
+          .concat(newImportSpecifier)
+          .sort((a, b) => {
+            if (a.type === 'ImportDefaultSpecifier') {
+              return -1;
+            }
+
+            if (b.type === 'ImportDefaultSpecifier') {
+              return 1;
+            }
+
+            return a.imported.name.localeCompare(b.imported.name);
+          });
+        return j.importDeclaration(mergedImportSpecifiers, j.literal(pkgName));
+      });
+    return;
+  }
+
   const path = findImportAfterModule(j, root, pkgName);
   if (path) {
-    const newImportSpecifier = j.importSpecifier(
-      j.identifier(importedModuleName),
-      localModuleName ? j.identifier(localModuleName) : null,
-    );
-
-    // if has module imported, just import new submodule from existed
-    // else just create a new import
-    if (hasModuleImport(j, root, pkgName)) {
-      root
-        .find(j.ImportDeclaration, {
-          source: { value: pkgName },
-        })
-        .at(0)
-        .replaceWith(({ node }) => {
-          const mergedImportSpecifiers = node.specifiers
-            .concat(newImportSpecifier)
-            .sort((a, b) => {
-              if (a.type === 'ImportDefaultSpecifier') {
-                return -1;
-              }
-
-              if (b.type === 'ImportDefaultSpecifier') {
-                return 1;
-              }
-
-              return a.imported.name.localeCompare(b.imported.name);
-            });
-          return j.importDeclaration(
-            mergedImportSpecifiers,
-            j.literal(pkgName),
-          );
-        });
-      return;
-    }
-
     const importStatement = j.importDeclaration(
       [newImportSpecifier],
       j.literal(pkgName),

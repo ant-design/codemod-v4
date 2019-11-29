@@ -1,11 +1,5 @@
-const {
-  withThemeSuffix,
-  removeTypeTheme,
-  alias,
-} = require('@ant-design/compatible/lib/icon/utils');
-const allIcons = require('@ant-design/icons/lib/icons');
-
 const { printOptions } = require('./utils/config');
+const { getV4IconComponentName } = require('./utils/icon');
 const {
   removeEmptyModuleImport,
   addSubmoduleImport,
@@ -158,13 +152,13 @@ module.exports = (file, api, options) => {
         attr => attr.name.name === 'theme',
       );
 
-      const v4IconComponentName = withThemeSuffix(
-        removeTypeTheme(alias(typeValue)),
+      const v4IconComponentName = getV4IconComponentName(
+        typeValue,
         // props#theme can be empty
-        (themeAttr && themeAttr.value.value) || 'outlined',
+        themeAttr && themeAttr.value.value,
       );
-      // check if component is valid or not in v4 icons
-      if (allIcons[v4IconComponentName]) {
+
+      if (v4IconComponentName) {
         oldIconComponent.name.name = v4IconComponentName;
         // remove props `type` and `theme`
         oldIconComponent.attributes = oldIconComponent.attributes.filter(

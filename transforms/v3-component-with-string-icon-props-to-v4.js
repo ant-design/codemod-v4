@@ -2,7 +2,7 @@ const { removeEmptyModuleImport, addSubmoduleImport } = require('./utils');
 const { printOptions } = require('./utils/config');
 const { getV4IconComponentName } = require('./utils/icon');
 
-const v3ComponentsWithIconPropString = ['Button'];
+const v3ComponentsWithIconPropString = ['Avatar', 'Button', 'Result'];
 
 module.exports = (file, api, options) => {
   const j = api.jscodeshift;

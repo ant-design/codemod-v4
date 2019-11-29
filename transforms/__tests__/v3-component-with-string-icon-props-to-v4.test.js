@@ -1,4 +1,4 @@
-const tests = ['button'];
+const tests = ['avatar', 'button', 'result'];
 
 const defineTest = require('jscodeshift/dist/testUtils').defineTest;
 

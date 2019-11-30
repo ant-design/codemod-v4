@@ -11,11 +11,10 @@ module.exports = (file, api, options) => {
   const j = api.jscodeshift;
   const root = j(file.source);
 
-  // remove old LocaleProvider imports
   function renameV4IconWithoutOutlinedImport(j, root) {
     let hasChanged = false;
 
-    // import { LocaleProvider } from 'antd';
+    // import { Smile } from '@ant-design/icons';
     root
       .find(j.Identifier)
       .filter(
@@ -64,9 +63,8 @@ module.exports = (file, api, options) => {
     return hasChanged;
   }
 
-  // step1. remove LocaleProvider import from antd
-  // step2. add ConfigProvider import from antd
-  // step3. cleanup antd import if empty
+  // step1. rename Icon without `outlined` import from @ant-design/icons
+  // step2. cleanup antd import if empty
   let hasChanged = false;
   hasChanged = renameV4IconWithoutOutlinedImport(j, root) || hasChanged;
 

@@ -30,7 +30,8 @@
     "@ant-design/compatible": "^0.0.1-alpha.5",
     "@ant-design/icons": "^4.0.0-alpha.11",
     "commander": "^4.0.1",
-    "jscodeshift": "^0.6.4"
+    "jscodeshift": "^0.6.4",
+    "rc-util": "^4.15.7"
   },
   "devDependencies": {
     "@umijs/fabric": "^1.1.10",

@@ -26,6 +26,15 @@
       "windows": {
         "program": "${workspaceFolder}/node_modules/jest/bin/jest"
       }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch cli",
+      "program": "${workspaceFolder}/bin/antd-codemod.js",
+      "cwd": "${workspaceFolder}/es",
+      "args": ["run", "--path", "*.js", "--style"],
+      "skipFiles": ["<node_internals>/**"]
     }
   ]
 }

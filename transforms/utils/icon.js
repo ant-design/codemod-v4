@@ -19,6 +19,16 @@ function getV4IconComponentName(type, theme) {
   console.warn(`The icon with type: ${type} and theme ${theme} cannot found`);
 }
 
+function createIconJSXElement(j, iconLocalName) {
+  const openingElement = j.jsxOpeningElement(
+    j.jsxIdentifier(iconLocalName),
+    [],
+  );
+  openingElement.selfClosing = true;
+  return j.jsxElement(openingElement);
+}
+
 module.exports = {
   getV4IconComponentName,
+  createIconJSXElement,
 };

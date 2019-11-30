@@ -1,6 +1,9 @@
 const { removeEmptyModuleImport, addSubmoduleImport } = require('./utils');
 const { printOptions } = require('./utils/config');
-const { getV4IconComponentName } = require('./utils/icon');
+const {
+  createIconJSXElement,
+  getV4IconComponentName,
+} = require('./utils/icon');
 
 const v3ComponentsWithIconPropString = ['Avatar', 'Button', 'Result'];
 
@@ -8,18 +11,8 @@ module.exports = (file, api, options) => {
   const j = api.jscodeshift;
   const root = j(file.source);
 
-  function createIconReactNode(j, componentName) {
-    const openingElement = j.jsxOpeningElement(
-      j.jsxIdentifier(componentName),
-      [],
-    );
-    openingElement.selfClosing = true;
-    const element = j.jsxElement(openingElement);
-    return j.jsxExpressionContainer(element);
-  }
-
-  // remove old LocaleProvider imports
-  function renameV3IconWithStringIconPropImport(j, root) {
+  // rename v3 component with `icon#string` prop
+  function renameV3ComponentWithIconPropImport(j, root) {
     let hasChanged = false;
     root
       .find(j.Identifier)
@@ -50,9 +43,12 @@ module.exports = (file, api, options) => {
               path.value.value,
             );
             if (v4IconComponentName) {
-              const reactNodeIcon = createIconReactNode(j, v4IconComponentName);
-
-              path.parent.node.value = reactNodeIcon;
+              const iconJSXElement = createIconJSXElement(
+                j,
+                v4IconComponentName,
+              );
+              // we need a brace to wrap a jsxElement to pass Icon prop
+              path.parent.node.value = j.jsxExpressionContainer(iconJSXElement);
 
               addSubmoduleImport(
                 j,
@@ -68,11 +64,10 @@ module.exports = (file, api, options) => {
     return hasChanged;
   }
 
-  // step1. remove LocaleProvider import from antd
-  // step2. add ConfigProvider import from antd
-  // step3. cleanup antd import if empty
+  // step1. rename v3 component with `icon#string` prop
+  // step2. cleanup antd import if empty
   let hasChanged = false;
-  hasChanged = renameV3IconWithStringIconPropImport(j, root) || hasChanged;
+  hasChanged = renameV3ComponentWithIconPropImport(j, root) || hasChanged;
 
   if (hasChanged) {
     removeEmptyModuleImport(j, root, 'antd');

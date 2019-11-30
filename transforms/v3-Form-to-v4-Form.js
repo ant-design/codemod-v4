@@ -1,5 +1,9 @@
 const { printOptions } = require('./utils/config');
-const { removeEmptyModuleImport, addSubmoduleImport } = require('./utils');
+const {
+  addSubmoduleImport,
+  addStyleModuleImport,
+  removeEmptyModuleImport,
+} = require('./utils');
 
 module.exports = (file, api, options) => {
   const j = api.jscodeshift;
@@ -45,9 +49,10 @@ module.exports = (file, api, options) => {
       j,
       root,
       '@ant-design/compatible',
-      'LegacyForm',
+      'Form',
       localComponentName,
     );
+    addStyleModuleImport(j, root, '@ant-design/compatible/assets/index.css');
     removeEmptyModuleImport(j, root, 'antd');
   }
 

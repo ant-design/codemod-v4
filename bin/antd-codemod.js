@@ -3,6 +3,7 @@ const program = require('commander');
 const isGitClean = require('is-git-clean');
 const chalk = require('chalk');
 const execa = require('execa');
+const globby = require('globby');
 
 const jscodeshiftBin = require.resolve('.bin/jscodeshift');
 const pkg = require('../package.json');
@@ -10,12 +11,12 @@ const pkg = require('../package.json');
 const transformersDir = path.join(__dirname, '../', 'transforms');
 
 const transformers = [
+  'v4-Icon-Outlined',
   'v3-Component-to-compatible',
   'v3-component-with-string-icon-props-to-v4',
   'v3-Icon-to-v4-Icon',
   'v3-LocaleProvider-to-v4-ConfigProvider',
   'v3-Modal-method-with-icon-to-v4',
-  'v4-Icon-Outlined',
 ];
 
 program.version(`${pkg.name} ${pkg.version}`).usage('<command> [options]');
@@ -51,22 +52,23 @@ function getRunnerArgs(filePath, transformerPath) {
   }
 
   args.push('--transform', transformerPath);
-  args.push(filePath);
   return args;
 }
 
 async function run(filePath) {
+  const paths = await globby([filePath]);
+
   for (const transformer of transformers) {
     const transformerPath = path.join(transformersDir, `${transformer}.js`);
-    console.log(chalk.bgGreen.bold('Transforming'), transformer);
+    console.log(chalk.bgGreen.bold('Transform'), transformer);
     const args = getRunnerArgs(filePath, transformerPath);
-    const result = await execa(jscodeshiftBin, args, {
-      stdio: 'inherit',
-      stripEof: false,
-    });
-
-    if (result.error) {
-      console.error(result.error);
+    try {
+      await execa(jscodeshiftBin, [...args, ...paths], {
+        stdio: 'inherit',
+        stripEof: false,
+      });
+    } catch (err) {
+      console.error(err);
     }
   }
 }

@@ -1,4 +1,5 @@
-import { LegacyForm as Form } from '@ant-design/compatible';
+import { Form } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
 import { Input, Button } from 'antd';
 
 class MyForm extends React.Component {

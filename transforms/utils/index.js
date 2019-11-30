@@ -1,4 +1,16 @@
 // some utils extract from https://github.com/reactjs/react-codemod
+function insertImportStatement(j, root, path, importStatement) {
+  // 保留首行的注释
+  // https://github.com/facebook/jscodeshift/blob/master/recipes/retain-first-comment.md
+  const firstNode = root.find(j.Program).get('body', 0).node;
+  const { comments } = firstNode;
+  if (comments) {
+    delete firstNode.comments;
+    importStatement.comments = comments;
+  }
+
+  j(path).insertBefore(importStatement);
+}
 
 function hasSubmoduleImport(j, root, moduleName, submoduleName) {
   return (
@@ -79,16 +91,7 @@ function addModuleDefaultImport(j, root, pkgName, localModuleName) {
       j.literal(pkgName),
     );
 
-    // If there is a leading comment, retain it
-    // https://github.com/facebook/jscodeshift/blob/master/recipes/retain-first-comment.md
-    const firstNode = root.find(j.Program).get('body', 0).node;
-    const { comments } = firstNode;
-    if (comments) {
-      delete firstNode.comments;
-      importStatement.comments = comments;
-    }
-
-    j(path).insertBefore(importStatement);
+    insertImportStatement(j, root, path, importStatement);
     return;
   }
 
@@ -145,16 +148,23 @@ function addSubmoduleImport(
       j.literal(pkgName),
     );
 
-    // If there is a leading comment, retain it
-    // https://github.com/facebook/jscodeshift/blob/master/recipes/retain-first-comment.md
-    const firstNode = root.find(j.Program).get('body', 0).node;
-    const { comments } = firstNode;
-    if (comments) {
-      delete firstNode.comments;
-      importStatement.comments = comments;
-    }
+    insertImportStatement(j, root, path, importStatement);
+    return;
+  }
 
-    j(path).insertBefore(importStatement);
+  throw new Error(`No ${pkgName} import found!`);
+}
+
+function addStyleModuleImport(j, root, pkgName) {
+  if (hasModuleImport(j, root, pkgName)) {
+    return;
+  }
+
+  const path = findImportAfterModule(j, root, pkgName);
+  if (path) {
+    const importStatement = j.importDeclaration([], j.literal(pkgName));
+
+    insertImportStatement(j, root, path, importStatement);
     return;
   }
 
@@ -162,8 +172,9 @@ function addSubmoduleImport(
 }
 
 module.exports = {
-  removeEmptyModuleImport,
-  addSubmoduleImport,
   addModuleDefaultImport,
+  addStyleModuleImport,
+  addSubmoduleImport,
+  removeEmptyModuleImport,
   useVar,
 };

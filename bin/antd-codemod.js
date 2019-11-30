@@ -4,6 +4,7 @@ const isGitClean = require('is-git-clean');
 const chalk = require('chalk');
 const execa = require('execa');
 const globby = require('globby');
+const updateCheck = require('update-check');
 
 const jscodeshiftBin = require.resolve('.bin/jscodeshift');
 const pkg = require('../package.json');
@@ -27,7 +28,11 @@ program
   .requiredOption('-p, --path <path>', 'The file path to transform')
   .option('-s, --style', 'Inject style from @ant-design/compatible')
   .action(async cmd => {
+    // check for updates
+    await checkUpdates();
+    // check for git status
     // await ensureGitClean();
+    // check for `path`
     if (!cmd.path) {
       console.log(chalk.yellow('You need to pass a `path` option'));
       process.exit(1);
@@ -36,6 +41,22 @@ program
   });
 
 program.parse(process.argv);
+
+async function checkUpdates() {
+  let update;
+  try {
+    update = await updateCheck(pkg);
+  } catch (err) {
+    console.log(chalk.yellow(`Failed to check for updates: ${err}`));
+  }
+
+  if (update) {
+    console.log(
+      chalk.blue(`Latest version is ${update.latest}. Please update firstly`),
+    );
+    process.exit(1);
+  }
+}
 
 function getRunnerArgs(filePath, transformerPath) {
   const args = ['--verbose=2', '--ignore-pattern=**/node_modules/**'];
@@ -72,8 +93,6 @@ async function run(filePath) {
     }
   }
 }
-
-async function checkUpdates() {}
 
 async function ensureGitClean() {
   let clean = false;

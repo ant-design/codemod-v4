@@ -13,11 +13,11 @@ const transformersDir = path.join(__dirname, '../', 'transforms');
 
 const transformers = [
   'v4-Icon-Outlined',
-  'v3-Component-to-compatible',
-  'v3-component-with-string-icon-props-to-v4',
   'v3-Icon-to-v4-Icon',
-  'v3-LocaleProvider-to-v4-ConfigProvider',
   'v3-Modal-method-with-icon-to-v4',
+  'v3-component-with-string-icon-props-to-v4',
+  'v3-Component-to-compatible',
+  'v3-LocaleProvider-to-v4-ConfigProvider',
 ];
 
 program.version(`${pkg.name} ${pkg.version}`).usage('<command> [options]');

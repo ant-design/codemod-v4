@@ -1,10 +1,14 @@
 {
   "name": "@ant-design/codemod",
   "version": "0.0.1",
-  "description": "Codemod for ant design upgrade",
+  "description": "Codemod for ant design v4 upgrade",
   "bin": {
     "antd-codemod": "bin/antd-codemod.js"
   },
+  "files": [
+    "bin",
+    "transforms"
+  ],
   "keywords": [
     "ant design",
     "codemod",

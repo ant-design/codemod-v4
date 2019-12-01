@@ -33,7 +33,7 @@
       "name": "Launch cli",
       "program": "${workspaceFolder}/bin/antd-codemod.js",
       "cwd": "${workspaceFolder}/lib",
-      "args": ["run", "--path", "*.js", "--style"],
+      "args": ["run", "--path", "*.js"],
       "skipFiles": ["<node_internals>/**"]
     }
   ]

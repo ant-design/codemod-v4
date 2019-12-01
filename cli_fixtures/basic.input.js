@@ -1,6 +1,4 @@
-import { Form, Mention } from '@ant-design/compatible';
-import '@ant-design/compatible/assets/index.css';
-import { Input, Button } from 'antd';
+import { Form, Input, Button, Mention } from 'antd';
 
 class MyForm extends React.Component {
   render() {

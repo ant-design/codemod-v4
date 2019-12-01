@@ -1,28 +1,27 @@
-import { Icon as LegacyIcon } from '@ant-design/compatible';
-import Icon from '@ant-design/icons';
+import { Icon } from 'antd';
 
 const Component = () => {
-  return <LegacyIcon type="code" theme="filled" />;
+  return <Icon type="code" theme="filled" />;
 };
 
 const Component1 = props => {
-  return <LegacyIcon type="code" theme={props.fill ? 'filled' : 'outlined'} />;
+  return <Icon type="code" theme={props.fill ? 'filled' : 'outlined'} />;
 };
 
 const Component2 = props => {
-  return <LegacyIcon type={props.type} theme="outlined" />;
+  return <Icon type={props.type} theme="outlined" />;
 };
 
 const Component3 = props => {
-  return <LegacyIcon type="code" theme="filled" />;
+  return <Icon type="code" theme="filled" />;
 };
 
 const Component4 = props => {
-  return <LegacyIcon type="smile" theme="twoTone" twoToneColor="#eb2f96" />;
+  return <Icon type="smile" theme="twoTone" twoToneColor="#eb2f96" />;
 };
 
 const Component5 = () => {
-  return <LegacyIcon type="code" />;
+  return <Icon type="code" />;
 };
 
 const HeartSvg = () => (
@@ -41,5 +40,5 @@ const ChildIcon = props => (
 );
 
 const Input = () => {
-  return <Input suffix={<LegacyIcon type="smile" />} />;
+  return <Input suffix={<Icon type="smile" />} />;
 };

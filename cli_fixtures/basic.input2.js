@@ -1,9 +1,9 @@
-import { ConfigProvider } from 'antd';
+import { LocaleProvider } from 'antd';
 
 const App = () => {
   return (
-    <ConfigProvider {...yourConfig}>
+    <LocaleProvider {...yourConfig}>
       <Main />
-    </ConfigProvider>
+    </LocaleProvider>
   );
 };

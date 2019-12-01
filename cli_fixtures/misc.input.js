@@ -1,9 +1,8 @@
-import { Icon as LegacyIcon } from '@ant-design/compatible';
-import { Result, Timeline } from 'antd';
+import { Icon, Result, Timeline } from 'antd';
 
 ReactDOM.render(
   <Result
-    icon={<LegacyIcon type="smile" theme="twoTone" />}
+    icon={<Icon type="smile" theme="twoTone" />}
     title="Great, we have done all the operations!"
     extra={<Button type="primary">Next</Button>}
   />,
@@ -15,7 +14,7 @@ ReactDOM.render(
     <Timeline.Item>Create a services site 2015-09-01</Timeline.Item>
     <Timeline.Item>Solve initial network problems 2015-09-01</Timeline.Item>
     <Timeline.Item
-      dot={<LegacyIcon type="clock-circle-o" style={{ fontSize: '16px' }} />}
+      dot={<Icon type="clock-circle-o" style={{ fontSize: '16px' }} />}
       color="red"
     >
       Technical testing 2015-09-01

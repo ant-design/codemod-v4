@@ -1,8 +1,4 @@
-import {
-  SmileFilled,
-  SmileOutlined as SmileO,
-  SmileTwoTone,
-} from '@ant-design/icons';
+import { Smile as SmileO, SmileFilled, SmileTwoTone } from '@ant-design/icons';
 
 const Component = () => {
   return <SmileO />;

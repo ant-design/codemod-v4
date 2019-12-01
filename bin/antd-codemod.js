@@ -28,10 +28,12 @@ program
   .requiredOption('-p, --path <path>', 'The file path to transform')
   .option('-s, --style', 'Inject style from @ant-design/compatible')
   .action(async cmd => {
-    // check for updates
-    await checkUpdates();
-    // check for git status
-    // await ensureGitClean();
+    if (process.env.NODE_ENV !== 'local') {
+      // check for updates
+      await checkUpdates();
+      // check for git status
+      await ensureGitClean();
+    }
     // check for `path`
     if (!cmd.path) {
       console.log(chalk.yellow('You need to pass a `path` option'));

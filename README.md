@@ -14,6 +14,12 @@ npx jscodeshift -t antd-codemod/transforms/v4-Icon-Outlined.js src/**/*.js --par
 node bin/antd-codemod.js run --path=es/*.js
 ```
 
+## Development
+
+```shell
+npx jscodeshift -t transforms/v3-Icon-to-v4-Icon.js cli_fixtures --parser=babylon
+```
+
 **tips**
 
 If you are using typescript, you can use `--parser=tsx` option.

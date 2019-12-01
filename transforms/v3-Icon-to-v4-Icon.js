@@ -12,165 +12,126 @@ const v3IconStaticMethods = [
   'setTwoToneColor',
 ];
 
+// filter for Icon#props contains `children`
+function iconContainValidChildren(jsxElement) {
+  return Array.isArray(jsxElement.children) && jsxElement.children.length > 0;
+}
+
+// filter for Icon#props contains `component`
+function iconContainValidComponentProp(jsxElement) {
+  const node = jsxElement.openingElement;
+  return (
+    node.attributes.filter(
+      n =>
+        n.type === 'JSXAttribute' &&
+        n.name.type === 'JSXIdentifier' &&
+        n.name.name === 'component',
+    ).length === 1
+  );
+}
+
+// filter for Icon#props contain a Literal `type` prop with a Literal or default `theme` prop
+function iconContainLiteralTypeAndThemeProp(jsxElement) {
+  const node = jsxElement.openingElement;
+  // Icon#prop `type` is Literal
+  const propTypeIsString =
+    node.attributes.filter(
+      n =>
+        n.type === 'JSXAttribute' &&
+        n.name.type === 'JSXIdentifier' &&
+        n.name.name === 'type' &&
+        n.value.type === 'Literal',
+    ).length === 1;
+  // Icon#prop `theme` is Literal or default
+  const propThemeIsStringOrDefault =
+    node.attributes.filter(
+      n =>
+        n.type === 'JSXAttribute' &&
+        n.name.type === 'JSXIdentifier' &&
+        n.name.name === 'theme' &&
+        n.value.type === 'Literal',
+    ).length === 1 ||
+    node.attributes.filter(
+      n =>
+        n.type === 'JSXAttribute' &&
+        n.name.type === 'JSXIdentifier' &&
+        n.name.name === 'theme',
+    ).length === 0;
+
+  return propTypeIsString && propThemeIsStringOrDefault;
+}
+
 module.exports = (file, api, options) => {
   const j = api.jscodeshift;
   const root = j(file.source);
 
   let localComponentName = 'Icon';
 
-  function rewriteOldIconWithImport(j, root) {
-    let hasChanged = false;
-    // 找到符合条件的 Icon components 通过 '@ant-design/icons' 引入
-    // 条件为 type 属性为 string, 且 theme 属性为 string
-    // 不符合的一概通过 '@ant-design/compatible' 引入
-    const existedIconComponents = root.findJSXElements(localComponentName);
+  function rewriteToV4DefaultIcon(j, root, localComponentName) {
+    // add @ant-design/icons imports
+    addModuleDefaultImport(j, root, '@ant-design/icons', localComponentName);
+  }
 
-    const targetIconComponents = existedIconComponents
-      .find(j.JSXAttribute, {
-        name: {
-          type: 'JSXIdentifier',
-          name: 'type',
-        },
-        value: {
-          type: 'Literal',
-        },
-      })
-      .filter(nodePath => {
-        const iconComponent = nodePath.parent.node;
-        const themeAttr = iconComponent.attributes.filter(
-          attr => attr.name.name === 'theme',
-        )[0];
-
-        return !themeAttr || (themeAttr && themeAttr.value.type === 'Literal');
-      });
-
-    if (existedIconComponents.size() > targetIconComponents.size()) {
-      const hasComponentPropIcon = existedIconComponents.find(j.JSXAttribute, {
-        name: {
-          type: 'JSXIdentifier',
-          name: 'component',
-        },
-      });
-      const hasChildrenPropIcon = existedIconComponents.filter(
-        nodePath =>
-          Array.isArray(nodePath.node.children) &&
-          nodePath.node.children.length,
-      );
-
-      // when props#component or props#children
-      // use Icon from '@ant-design/icons'
-      if (hasComponentPropIcon.length > 0 || hasChildrenPropIcon > 0) {
-        // add @ant-design/compatible imports
-        addModuleDefaultImport(j, root, '@ant-design/icons', 'Icon');
-        hasChanged = true;
-      }
-
-      const unconvertableIconComponents = existedIconComponents
-        .filter(
-          nodePath => !nodePath.node.children || !nodePath.node.children.length,
-        )
-        .filter(nodePath => {
-          return (
-            j(nodePath)
-              .find(j.JSXAttribute, {
-                name: {
-                  type: 'JSXIdentifier',
-                  name: 'component',
-                },
-              })
-              .size() === 0
-          );
-        });
-
-      if (unconvertableIconComponents.size() > 0) {
-        if (localComponentName !== 'Icon') {
-          // add @ant-design/compatible imports
-          addSubmoduleImport(
-            j,
-            root,
-            '@ant-design/compatible',
-            'Icon',
-            localComponentName,
-          );
-          hasChanged = true;
-        }
-        // 需要将符合条件的 Icon 转换成 LegacyIcon 引用
-        unconvertableIconComponents
-          .find(j.JSXAttribute, {
-            name: {
-              type: 'JSXIdentifier',
-              name: 'type',
-            },
-          })
-          .filter(nodePath => {
-            // props#type is not a string
-            if (nodePath.value.value.type !== 'Literal') {
-              return true;
-            }
-
-            const iconComponent = nodePath.parent.node;
-            const themeAttr = iconComponent.attributes.filter(
-              attr => attr.name.name === 'theme',
-            )[0];
-            // has no props#theme
-            if (!themeAttr) {
-              return true;
-            }
-
-            // props#theme is not a string
-            if (themeAttr && themeAttr.value.type !== 'Literal') {
-              return true;
-            }
-          })
-          .forEach(nodePath => {
-            // rename iconComponent name to LegacyIcon
-            const iconComponent = nodePath.parent.node;
-            iconComponent.name.name = 'LegacyIcon';
-            // add @ant-design/compatible imports
-            addSubmoduleImport(
-              j,
-              root,
-              '@ant-design/compatible',
-              'Icon',
-              'LegacyIcon',
-            );
-          });
-      }
+  function rewriteToCompatibleIcon(j, root, localComponentName, jsxElement) {
+    // rename name to `LegacyIcon`
+    jsxElement.openingElement.name.name = 'LegacyIcon';
+    if (jsxElement.closingElement) {
+      jsxElement.closingElement.name.name = 'LegacyIcon';
     }
+    // add @ant-design/compatible imports
+    addSubmoduleImport(j, root, '@ant-design/compatible', 'Icon', 'LegacyIcon');
+  }
 
-    if (targetIconComponents.size() === 0) {
-      return hasChanged;
-    }
+  function rewriteToSepcificV4Icon(j, root, localComponentName, jsxElement) {
+    const node = jsxElement.openingElement;
+    const typeAttr = node.attributes.find(attr => attr.name.name === 'type');
+    const themeAttr = node.attributes.find(attr => attr.name.name === 'theme');
 
-    targetIconComponents.forEach(nodePath => {
-      const oldIconComponent = nodePath.parent.node;
-      const typeAttr = oldIconComponent.attributes.find(
-        attr => attr.name.name === 'type',
-      );
-      const typeValue = typeAttr.value.value;
-      const themeAttr = oldIconComponent.attributes.find(
-        attr => attr.name.name === 'theme',
-      );
+    const v4IconComponentName = getV4IconComponentName(
+      typeAttr.value.value,
+      // props#theme can be empty
+      themeAttr && themeAttr.value.value,
+    );
 
-      const v4IconComponentName = getV4IconComponentName(
-        typeValue,
-        // props#theme can be empty
-        themeAttr && themeAttr.value.value,
-      );
-
-      if (v4IconComponentName) {
-        oldIconComponent.name.name = v4IconComponentName;
-        // remove props `type` and `theme`
-        oldIconComponent.attributes = oldIconComponent.attributes.filter(
-          attr => !['theme', 'type'].includes(attr.name.name),
-        );
-        // add a new import for v4 icon component
-        addSubmoduleImport(j, root, '@ant-design/icons', v4IconComponentName);
-        hasChanged = true;
+    if (v4IconComponentName) {
+      node.name.name = v4IconComponentName;
+      if (jsxElement.closingElement) {
+        jsxElement.closingElement.name.name = v4IconComponentName;
       }
+
+      // remove props `type` and `theme`
+      node.attributes = node.attributes.filter(
+        attr => !['theme', 'type'].includes(attr.name.name),
+      );
+      // add a new import for v4 icon component
+      addSubmoduleImport(j, root, '@ant-design/icons', v4IconComponentName);
+      hasChanged = true;
+    }
+  }
+
+  function rewriteOldIconImport(j, root, localComponentName) {
+    // 1. 找到符合条件的改写为 import Icon from '@ant-design/icons'
+    //    条件为 children 属性为 不为空 或者 component 属性不为空
+    // 2. 找到符合条件的改写为 import { SpecificIcon } from '@ant-design/icons'
+    //    条件为 type 属性为 string, 且 theme 属性为 string
+    // 不符合的统一改写为 import { Icon as LegacyIcon } '@ant-design/compatible'
+    root.findJSXElements(localComponentName).forEach(nodePath => {
+      const jsxElement = nodePath.node;
+      if (
+        iconContainValidChildren(jsxElement) ||
+        iconContainValidComponentProp(jsxElement)
+      ) {
+        rewriteToV4DefaultIcon(j, root, localComponentName);
+        return;
+      }
+
+      if (iconContainLiteralTypeAndThemeProp(jsxElement)) {
+        rewriteToSepcificV4Icon(j, root, localComponentName, jsxElement);
+        return;
+      }
+
+      rewriteToCompatibleIcon(j, root, localComponentName, jsxElement);
     });
-
-    return hasChanged;
   }
 
   // remove old Icon imports from antd
@@ -178,6 +139,7 @@ module.exports = (file, api, options) => {
     let hasChanged = false;
 
     // import { Icon } from 'antd';
+    // import { Icon as AntdIcon } from 'antd';
     root
       .find(j.Identifier)
       .filter(
@@ -191,10 +153,13 @@ module.exports = (file, api, options) => {
         localComponentName = path.parent.node.local.name;
 
         const importDeclaration = path.parent.parent.node;
+        // remove old imports
         importDeclaration.specifiers = importDeclaration.specifiers.filter(
           specifier =>
             !specifier.imported || specifier.imported.name !== 'Icon',
         );
+
+        rewriteOldIconImport(j, root, localComponentName);
       });
 
     return hasChanged;
@@ -240,8 +205,6 @@ module.exports = (file, api, options) => {
   // step4. cleanup antd import if empty
   let hasChanged = false;
   hasChanged = removeAntdIconImport(j, root) || hasChanged;
-
-  hasChanged = rewriteOldIconWithImport(j, root) || hasChanged;
   hasChanged = rewriteAntdStaticIconMethods(j, root) || hasChanged;
 
   if (hasChanged) {

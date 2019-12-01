@@ -20,7 +20,7 @@
   },
   "license": "MIT",
   "scripts": {
-    "prepublishOnly": "npm run compile && np --yolo --no-publish && npm run gh-pages",
+    "prepublishOnly": "np --yolo --no-publish",
     "lint": "eslint transforms/ --ext .ts,.tsx,.jsx,.js,.md",
     "prettier": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "pretty-quick": "pretty-quick",

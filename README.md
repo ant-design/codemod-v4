@@ -6,12 +6,12 @@ A collection of codemod scripts that help upgrade antd v4 using [jscodeshift](ht
 
 ```shell
 # for tsx
-npx @ant-design/codemod run --path src --parser=tsx
-npx @ant-design/codemod run --path src/**/*.tsx
+npx -p @ant-design/codemod antd-codemod run --path src --parser=tsx
+npx -p @ant-design/codemod antd-codemod run --path src/**/*.tsx
 
 # for js
-npx @ant-design/codemod run --path src
-npx @ant-design/codemod run --path src/**/*.js
+npx -p @ant-design/codemod antd-codemod run --path src
+npx -p @ant-design/codemod antd-codemod run --path src/**/*.js
 ```
 
 **tips**

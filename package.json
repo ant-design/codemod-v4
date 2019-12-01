@@ -3,7 +3,7 @@
   "version": "0.1.2",
   "description": "Codemod for ant design v4 upgrade",
   "bin": {
-    "@ant-design/codemod": "bin/antd-codemod.js"
+    "antd-codemod": "./bin/antd-codemod.js"
   },
   "files": [
     "bin",

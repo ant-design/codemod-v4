@@ -1,4 +1,4 @@
-const tests = ['basic', 'icon-static-methods'];
+const tests = ['basic', 'icon-static-methods', 'misc'].slice(0, 1);
 
 const defineTest = require('jscodeshift/dist/testUtils').defineTest;
 

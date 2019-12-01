@@ -29,3 +29,5 @@ yarn.lock
 package-lock.json
 coverage/
 .doc
+
+cli_fixtures/

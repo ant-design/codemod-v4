@@ -37,16 +37,22 @@ function hasModuleImport(j, root, moduleName) {
 }
 
 function hasModuleDefaultImport(j, root, pkgName, localModuleName) {
-  return (
-    root
-      .find(j.ImportDeclaration, {
-        source: { value: pkgName },
-      })
-      .find(j.ImportDefaultSpecifier, {
-        name: localModuleName,
-      })
-      .size() > 1
-  );
+  let found = false;
+  root
+    .find(j.ImportDeclaration, {
+      source: { value: pkgName },
+    })
+    .forEach(nodePath => {
+      const defaultImport = nodePath.node.specifiers.filter(
+        n =>
+          n.type === 'ImportDefaultSpecifier' &&
+          n.local.name === localModuleName,
+      );
+      if (defaultImport.length) {
+        found = true;
+      }
+    });
+  return found;
 }
 
 function findImportAfterModule(j, root, moduleName) {
@@ -79,19 +85,56 @@ function useVar(j, root) {
   return root.find(j.VariableDeclaration, { kind: 'const' }).length === 0;
 }
 
-function addModuleDefaultImport(j, root, pkgName, localModuleName) {
-  if (hasModuleDefaultImport(j, root, pkgName, localModuleName)) {
-    return;
+function addModuleImport(j, root, pkgName, importSpecifier) {
+  // if has module imported, just import new submodule from existed
+  // else just create a new import
+  if (hasModuleImport(j, root, pkgName)) {
+    root
+      .find(j.ImportDeclaration, {
+        source: { value: pkgName },
+      })
+      .at(0)
+      .replaceWith(({ node }) => {
+        const mergedImportSpecifiers = node.specifiers
+          .concat(importSpecifier)
+          .sort((a, b) => {
+            if (a.type === 'ImportDefaultSpecifier') {
+              return -1;
+            }
+
+            if (b.type === 'ImportDefaultSpecifier') {
+              return 1;
+            }
+
+            return a.imported.name.localeCompare(b.imported.name);
+          });
+        return j.importDeclaration(mergedImportSpecifiers, j.literal(pkgName));
+      });
+    return true;
   }
 
   const path = findImportAfterModule(j, root, pkgName);
   if (path) {
     const importStatement = j.importDeclaration(
-      [j.importDefaultSpecifier(j.identifier(localModuleName))],
+      [importSpecifier],
       j.literal(pkgName),
     );
 
     insertImportStatement(j, root, path, importStatement);
+    return true;
+  }
+}
+
+function addModuleDefaultImport(j, root, pkgName, localModuleName) {
+  if (hasModuleDefaultImport(j, root, pkgName, localModuleName)) {
+    return;
+  }
+
+  const newDefaultImportSpecifier = j.importDefaultSpecifier(
+    j.identifier(localModuleName),
+  );
+
+  if (addModuleImport(j, root, pkgName, newDefaultImportSpecifier)) {
     return;
   }
 
@@ -114,41 +157,7 @@ function addSubmoduleImport(
     localModuleName ? j.identifier(localModuleName) : null,
   );
 
-  // if has module imported, just import new submodule from existed
-  // else just create a new import
-  if (hasModuleImport(j, root, pkgName)) {
-    root
-      .find(j.ImportDeclaration, {
-        source: { value: pkgName },
-      })
-      .at(0)
-      .replaceWith(({ node }) => {
-        const mergedImportSpecifiers = node.specifiers
-          .concat(newImportSpecifier)
-          .sort((a, b) => {
-            if (a.type === 'ImportDefaultSpecifier') {
-              return -1;
-            }
-
-            if (b.type === 'ImportDefaultSpecifier') {
-              return 1;
-            }
-
-            return a.imported.name.localeCompare(b.imported.name);
-          });
-        return j.importDeclaration(mergedImportSpecifiers, j.literal(pkgName));
-      });
-    return;
-  }
-
-  const path = findImportAfterModule(j, root, pkgName);
-  if (path) {
-    const importStatement = j.importDeclaration(
-      [newImportSpecifier],
-      j.literal(pkgName),
-    );
-
-    insertImportStatement(j, root, path, importStatement);
+  if (addModuleImport(j, root, pkgName, newImportSpecifier)) {
     return;
   }
 

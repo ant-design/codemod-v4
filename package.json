@@ -1,6 +1,6 @@
 {
   "name": "@ant-design/codemod",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Codemod for ant design v4 upgrade",
   "bin": {
     "antd-codemod": "./bin/antd-codemod.js"
@@ -24,7 +24,7 @@
   },
   "license": "MIT",
   "engines": {
-    "node" : ">=8.0.0" 
+    "node": ">=8.0.0"
   },
   "scripts": {
     "prepublishOnly": "np --yolo --no-publish",

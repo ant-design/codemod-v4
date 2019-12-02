@@ -1,3 +1,12 @@
+jest.mock('../v3-component-with-string-icon-props-to-v4', () => {
+  return Object.assign(
+    require.requireActual('../v3-component-with-string-icon-props-to-v4'),
+    {
+      parser: 'babylon',
+    },
+  );
+});
+
 const tests = ['avatar', 'button', 'result'];
 
 const defineTest = require('jscodeshift/dist/testUtils').defineTest;

@@ -1,3 +1,9 @@
+jest.mock('../v4-Icon-Outlined', () => {
+  return Object.assign(require.requireActual('../v4-Icon-Outlined'), {
+    parser: 'babylon',
+  });
+});
+
 const tests = ['basic', 'alias-import'];
 
 const defineTest = require('jscodeshift/dist/testUtils').defineTest;

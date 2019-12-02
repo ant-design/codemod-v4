@@ -40,7 +40,7 @@ function iconContainLiteralTypeAndThemeProp(jsxElement) {
         n.type === 'JSXAttribute' &&
         n.name.type === 'JSXIdentifier' &&
         n.name.name === 'type' &&
-        n.value.type === 'Literal',
+        n.value.type === 'StringLiteral',
     ).length === 1;
   // Icon#prop `theme` is Literal or default
   const propThemeIsStringOrDefault =
@@ -49,7 +49,7 @@ function iconContainLiteralTypeAndThemeProp(jsxElement) {
         n.type === 'JSXAttribute' &&
         n.name.type === 'JSXIdentifier' &&
         n.name.name === 'theme' &&
-        n.value.type === 'Literal',
+        n.value.type === 'StringLiteral',
     ).length === 1 ||
     node.attributes.filter(
       n =>

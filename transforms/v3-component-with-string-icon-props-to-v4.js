@@ -33,7 +33,7 @@ module.exports = (file, api, options) => {
               name: 'icon',
             },
             value: {
-              type: 'Literal',
+              type: 'StringLiteral',
             },
           })
           .find(j.Literal)

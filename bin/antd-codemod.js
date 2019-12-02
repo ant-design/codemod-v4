@@ -27,7 +27,7 @@ program
   .command('run')
   .description('antd codemod for antd v4 Form migration')
   .requiredOption('-p, --path <path>', 'The file path to transform')
-  .option('--parser', 'parser option to jscodeshift')
+  .option('-r, --parser <parser-name>', 'parser option to jscodeshift')
   .option('-s, --style', 'Inject style from @ant-design/compatible')
   .action(async cmd => {
     if (process.env.NODE_ENV !== 'local') {
@@ -62,17 +62,15 @@ async function checkUpdates() {
   }
 }
 
-function getRunnerArgs(filePath, transformerPath, parserOption) {
+function getRunnerArgs(filePath, transformerPath, parserOption = 'babel') {
   const args = ['--verbose=2', '--ignore-pattern=**/node_modules/**'];
 
   const extname = path.extname(filePath);
   // use bablyon as default parser
   // will you use Flow?
   let parser = parserOption;
-  if (!parser && ['.tsx', '.ts'].includes(extname)) {
+  if (['.tsx', '.ts'].includes(extname)) {
     parser = 'tsx';
-  } else {
-    parser = 'babel';
   }
   args.push('--parser', parser);
 

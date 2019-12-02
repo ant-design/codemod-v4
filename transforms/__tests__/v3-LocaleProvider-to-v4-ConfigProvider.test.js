@@ -1,3 +1,12 @@
+jest.mock('../v3-LocaleProvider-to-v4-ConfigProvider', () => {
+  return Object.assign(
+    require.requireActual('../v3-LocaleProvider-to-v4-ConfigProvider'),
+    {
+      parser: 'babylon',
+    },
+  );
+});
+
 const tests = ['basic', 'alias-import'];
 
 const defineTest = require('jscodeshift/dist/testUtils').defineTest;

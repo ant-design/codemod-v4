@@ -54,7 +54,7 @@ module.exports = (file, api, options) => {
               property =>
                 property.key.type === 'Identifier' &&
                 property.key.name === 'icon' &&
-                property.value.type === 'Literal',
+                property.value.type === 'StringLiteral',
             );
 
             if (!iconProperty) {

@@ -31,9 +31,12 @@
       "type": "node",
       "request": "launch",
       "name": "Launch cli",
+      "env": {
+        "NODE_ENV": "local"
+      },
       "program": "${workspaceFolder}/bin/antd-codemod.js",
-      "cwd": "${workspaceFolder}/lib",
-      "args": ["run", "--path", "*.js"],
+      "cwd": "${workspaceFolder}/es",
+      "args": ["run", "--path=*.js", "--parser=babylon"],
       "skipFiles": ["<node_internals>/**"]
     }
   ]

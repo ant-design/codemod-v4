@@ -23,6 +23,9 @@
     "url": "http://github.com/ant-design/codemod/issues"
   },
   "license": "MIT",
+  "engines": {
+    "node" : ">=8.0.0" 
+  },
   "scripts": {
     "prepublishOnly": "np --yolo --no-publish",
     "lint": "eslint transforms/ --ext .ts,.tsx,.jsx,.js,.md",

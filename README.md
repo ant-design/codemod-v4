@@ -7,13 +7,22 @@ A collection of codemod scripts that help upgrade antd v4 using [jscodeshift](ht
 ## Usage
 
 ```shell
+# global installation
+npm i -g @ant-design/codemod
+
 # for tsx
-npx -p @ant-design/codemod antd-codemod run --path=src --parser=tsx
-npx -p @ant-design/codemod antd-codemod run --path=src/**/*.tsx
+antd-codemod run --dir=src --parser=babylon
+# for js
+antd-codemod run --dir=src/**/*.tsx --parser=tsx
+
+# or using npx
+# for tsx
+npx -p @ant-design/codemod antd-codemod run --dir=src --parser=tsx
+npx -p @ant-design/codemod antd-codemod run --dir=src/**/*.tsx
 
 # for js
-npx -p @ant-design/codemod antd-codemod run --path=src
-npx -p @ant-design/codemod antd-codemod run --path=src/**/*.js
+npx -p @ant-design/codemod antd-codemod run --dir=src
+npx -p @ant-design/codemod antd-codemod run --dir=src/**/*.js
 ```
 
 **tips**

@@ -26,8 +26,11 @@ program.version(`${pkg.name} ${pkg.version}`).usage('<command> [options]');
 program
   .command('run')
   .description('antd codemod for antd v4 Form migration')
-  .requiredOption('-p, --path <path>', 'The file path to transform')
-  .option('-r, --parser <parser-name>', 'parser option to jscodeshift')
+  .requiredOption(
+    '-d, --dir <path>',
+    'The dir path contains files to transform',
+  )
+  .option('-p, --parser <parser>', 'Parser option to jscodeshift')
   .option('-s, --style', 'Inject style from @ant-design/compatible')
   .action(async cmd => {
     if (process.env.NODE_ENV !== 'local') {
@@ -37,8 +40,8 @@ program
       await ensureGitClean();
     }
     // check for `path`
-    if (!cmd.path) {
-      console.log(chalk.yellow('You need to pass a `path` option'));
+    if (!cmd.dir) {
+      console.log(chalk.yellow('You need to pass a `dir` option'));
       process.exit(1);
     }
     run(cmd);
@@ -62,12 +65,11 @@ async function checkUpdates() {
   }
 }
 
-function getRunnerArgs(filePath, transformerPath, parserOption = 'babel') {
+function getRunnerArgs(filePath, transformerPath, parserOption = 'babylon') {
   const args = ['--verbose=2', '--ignore-pattern=**/node_modules/**'];
 
   const extname = path.extname(filePath);
-  // use bablyon as default parser
-  // will you use Flow?
+  // use babylon as default parser
   let parser = parserOption;
   if (['.tsx', '.ts'].includes(extname)) {
     parser = 'tsx';
@@ -85,8 +87,10 @@ function getRunnerArgs(filePath, transformerPath, parserOption = 'babel') {
 }
 
 async function run(command) {
-  const { path: filePath, parser } = command;
-  const paths = await globby([filePath]);
+  const { dir: filePath, parser } = command;
+  let paths = await globby([filePath]);
+  // filter for `.js(x) | .ts(x)`
+  paths = paths.filter(path => /.(j|t)sx?$/.test(path));
 
   for (const transformer of transformers) {
     const transformerPath = path.join(transformersDir, `${transformer}.js`);

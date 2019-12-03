@@ -64,8 +64,7 @@ function iconContainLiteralTypeAndThemeProp(jsxElement) {
 module.exports = (file, api, options) => {
   const j = api.jscodeshift;
   const root = j(file.source);
-
-  let localComponentName = 'Icon';
+  const antdPkgNames = options.antdPkgNames || ['antd'];
 
   function rewriteToV4DefaultIcon(j, root, localComponentName) {
     // add @ant-design/icons imports
@@ -140,17 +139,18 @@ module.exports = (file, api, options) => {
 
     // import { Icon } from 'antd';
     // import { Icon as AntdIcon } from 'antd';
+    // import { Icon } from '@forked/antd';
     root
       .find(j.Identifier)
       .filter(
         path =>
           path.node.name === 'Icon' &&
           path.parent.node.type === 'ImportSpecifier' &&
-          path.parent.parent.node.source.value === 'antd',
+          antdPkgNames.includes(path.parent.parent.node.source.value),
       )
       .forEach(path => {
         hasChanged = true;
-        localComponentName = path.parent.node.local.name;
+        const localComponentName = path.parent.node.local.name;
 
         const importDeclaration = path.parent.parent.node;
         // remove old imports
@@ -160,13 +160,14 @@ module.exports = (file, api, options) => {
         );
 
         rewriteOldIconImport(j, root, localComponentName);
+        rewriteAntdStaticIconMethods(j, root, localComponentName);
       });
 
     return hasChanged;
   }
 
   // rewrite v3 Icon static methods
-  function rewriteAntdStaticIconMethods(j, root) {
+  function rewriteAntdStaticIconMethods(j, root, localComponentName) {
     let hasChanged = false;
     const staticMethodCallExpressions = root
       .find(j.CallExpression, {
@@ -174,7 +175,7 @@ module.exports = (file, api, options) => {
           type: 'MemberExpression',
           object: {
             type: 'Identifier',
-            name: 'Icon',
+            name: localComponentName,
           },
           property: {
             type: 'Identifier',
@@ -205,10 +206,11 @@ module.exports = (file, api, options) => {
   // step4. cleanup antd import if empty
   let hasChanged = false;
   hasChanged = removeAntdIconImport(j, root) || hasChanged;
-  hasChanged = rewriteAntdStaticIconMethods(j, root) || hasChanged;
 
   if (hasChanged) {
-    removeEmptyModuleImport(j, root, 'antd');
+    antdPkgNames.forEach(antdPkgName => {
+      removeEmptyModuleImport(j, root, antdPkgName);
+    });
   }
 
   return hasChanged

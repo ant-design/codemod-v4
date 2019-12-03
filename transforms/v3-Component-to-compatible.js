@@ -10,6 +10,7 @@ const deprecatedComponentNames = ['Form', 'Mention'];
 module.exports = (file, api, options) => {
   const j = api.jscodeshift;
   const root = j(file.source);
+  const antdPkgNames = options.antdPkgNames || ['antd'];
 
   const importStyles = 'importStyles' in options ? options.importStyles : true;
 
@@ -18,13 +19,14 @@ module.exports = (file, api, options) => {
     let hasChanged = false;
 
     // import { Form, Mention } from 'antd';
+    // import { Form, Mention } from '@forked/antd';
     root
       .find(j.Identifier)
       .filter(
         path =>
           deprecatedComponentNames.includes(path.node.name) &&
           path.parent.node.type === 'ImportSpecifier' &&
-          path.parent.parent.node.source.value === 'antd',
+          antdPkgNames.includes(path.parent.parent.node.source.value),
       )
       .forEach(path => {
         hasChanged = true;
@@ -66,7 +68,9 @@ module.exports = (file, api, options) => {
   hasChanged = importDeprecatedComponent(j, root) || hasChanged;
 
   if (hasChanged) {
-    removeEmptyModuleImport(j, root, 'antd');
+    antdPkgNames.forEach(antdPkgName => {
+      removeEmptyModuleImport(j, root, antdPkgName);
+    });
   }
 
   return hasChanged

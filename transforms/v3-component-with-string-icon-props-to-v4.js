@@ -10,6 +10,7 @@ const v3ComponentsWithIconPropString = ['Avatar', 'Button', 'Result'];
 module.exports = (file, api, options) => {
   const j = api.jscodeshift;
   const root = j(file.source);
+  const antdPkgNames = options.antdPkgNames || ['antd'];
 
   // rename v3 component with `icon#string` prop
   function renameV3ComponentWithIconPropImport(j, root) {
@@ -20,7 +21,7 @@ module.exports = (file, api, options) => {
         path =>
           v3ComponentsWithIconPropString.includes(path.node.name) &&
           path.parent.node.type === 'ImportSpecifier' &&
-          path.parent.parent.node.source.value === 'antd',
+          antdPkgNames.includes(path.parent.parent.node.source.value),
       )
       .forEach(path => {
         const localComponentName = path.parent.node.local.name;
@@ -70,7 +71,9 @@ module.exports = (file, api, options) => {
   hasChanged = renameV3ComponentWithIconPropImport(j, root) || hasChanged;
 
   if (hasChanged) {
-    removeEmptyModuleImport(j, root, 'antd');
+    antdPkgNames.forEach(antdPkgName => {
+      removeEmptyModuleImport(j, root, antdPkgName);
+    });
   }
 
   return hasChanged

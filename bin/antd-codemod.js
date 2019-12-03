@@ -12,6 +12,10 @@ const pkg = require('../package.json');
 
 const transformersDir = path.join(__dirname, '../', 'transforms');
 
+// override default babylon parser config to enable `decorator-legacy`
+// https://github.com/facebook/jscodeshift/blob/master/parser/babylon.js
+const babylonConfig = path.join(__dirname, '../', 'babylon.config.json');
+
 const transformers = [
   'v4-Icon-Outlined',
   'v3-Icon-to-v4-Icon',
@@ -65,7 +69,12 @@ async function checkUpdates() {
   }
 }
 
-function getRunnerArgs(filePath, transformerPath, parserOption = 'babylon') {
+function getRunnerArgs(
+  filePath,
+  transformerPath,
+  styleOption = true,
+  parserOption = 'babylon',
+) {
   const args = ['--verbose=2', '--ignore-pattern=**/node_modules/**'];
 
   const extname = path.extname(filePath);
@@ -79,15 +88,21 @@ function getRunnerArgs(filePath, transformerPath, parserOption = 'babylon') {
   if (parser === 'tsx') {
     args.push('--extensions=tsx,ts,jsx,js');
   } else {
+    args.push('--parser-config', babylonConfig);
     args.push('--extensions=jsx,js');
   }
 
   args.push('--transform', transformerPath);
+
+  if (styleOption) {
+    args.push('--importStyles=true');
+  }
+
   return args;
 }
 
 async function run(command) {
-  const { dir: filePath, parser } = command;
+  const { dir: filePath, parser: parserOption, style: styleOption } = command;
   let paths = await globby([filePath]);
   // filter for `.js(x) | .ts(x)`
   paths = paths.filter(path => /.(j|t)sx?$/.test(path));
@@ -95,7 +110,12 @@ async function run(command) {
   for (const transformer of transformers) {
     const transformerPath = path.join(transformersDir, `${transformer}.js`);
     console.log(chalk.bgGreen.bold('Transform'), transformer);
-    const args = getRunnerArgs(filePath, transformerPath, parser);
+    const args = getRunnerArgs(
+      filePath,
+      transformerPath,
+      styleOption,
+      parserOption,
+    );
     try {
       await execa(jscodeshiftBin, [...args, ...paths], {
         stdio: 'inherit',

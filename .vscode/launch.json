@@ -36,7 +36,7 @@
       },
       "program": "${workspaceFolder}/bin/antd-codemod.js",
       "cwd": "${workspaceFolder}/es",
-      "args": ["run", "--path=*.js", "--parser=babylon"],
+      "args": ["run", "--dir=*.js", "--parser=babylon", "--style"],
       "skipFiles": ["<node_internals>/**"]
     }
   ]

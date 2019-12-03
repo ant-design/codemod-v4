@@ -11,6 +11,8 @@ module.exports = (file, api, options) => {
   const j = api.jscodeshift;
   const root = j(file.source);
 
+  const importStyles = 'importStyles' in options ? options.importStyles : true;
+
   // import deprecated components from '@ant-design/compatible'
   function importDeprecatedComponent(j, root) {
     let hasChanged = false;
@@ -45,11 +47,14 @@ module.exports = (file, api, options) => {
           importedComponentName,
           localComponentName,
         );
-        addStyleModuleImport(
-          j,
-          root,
-          '@ant-design/compatible/assets/index.css',
-        );
+
+        if (importStyles) {
+          addStyleModuleImport(
+            j,
+            root,
+            '@ant-design/compatible/assets/index.css',
+          );
+        }
       });
 
     return hasChanged;

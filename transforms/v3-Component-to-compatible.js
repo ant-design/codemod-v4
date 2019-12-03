@@ -7,9 +7,11 @@ const {
 
 const deprecatedComponentNames = ['Form', 'Mention'];
 
-module.exports = (file, api, options = { importStyles: true }) => {
+module.exports = (file, api, options) => {
   const j = api.jscodeshift;
   const root = j(file.source);
+
+  const importStyles = 'importStyles' in options ? options.importStyles : true;
 
   // import deprecated components from '@ant-design/compatible'
   function importDeprecatedComponent(j, root) {
@@ -46,7 +48,7 @@ module.exports = (file, api, options = { importStyles: true }) => {
           localComponentName,
         );
 
-        if (options.importStyles) {
+        if (importStyles) {
           addStyleModuleImport(
             j,
             root,

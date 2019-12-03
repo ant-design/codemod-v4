@@ -95,7 +95,7 @@ function getRunnerArgs(
   args.push('--transform', transformerPath);
 
   if (styleOption) {
-    args.push('--importStyles=true');
+    args.push('--importStyles');
   }
 
   return args;

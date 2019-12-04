@@ -98,6 +98,7 @@ function getRunnerArgs(
     args.push('--importStyles');
   }
 
+  args.push('--antdPkgNames=antd,@alipay/bigfish/antd');
   return args;
 }
 

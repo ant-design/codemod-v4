@@ -4,11 +4,10 @@ const { removeEmptyModuleImport, addSubmoduleImport } = require('./utils');
 module.exports = (file, api, options) => {
   const j = api.jscodeshift;
   const root = j(file.source);
+  const antdPkgNames = options.antdPkgNames || ['antd'];
 
-  let localComponentName = 'LocaleProvider';
-
-  // remove old LocaleProvider imports
-  function removeAntdLocaleProviderImport(j, root) {
+  // rename old LocaleProvider imports
+  function renameAntdLocaleProviderImport(j, root) {
     let hasChanged = false;
 
     // import { LocaleProvider } from 'antd';
@@ -18,17 +17,39 @@ module.exports = (file, api, options) => {
         path =>
           path.node.name === 'LocaleProvider' &&
           path.parent.node.type === 'ImportSpecifier' &&
-          path.parent.parent.node.source.value === 'antd',
+          antdPkgNames.includes(path.parent.parent.node.source.value),
       )
       .forEach(path => {
+        const antdPkgName = path.parent.parent.node.source.value;
         hasChanged = true;
-        localComponentName = path.parent.node.local.name;
+        const localComponentName = path.parent.node.local.name;
 
         const importDeclaration = path.parent.parent.node;
         importDeclaration.specifiers = importDeclaration.specifiers.filter(
           specifier =>
             !specifier.imported || specifier.imported.name !== 'LocaleProvider',
         );
+
+        if (localComponentName === 'LocaleProvider') {
+          root
+            .findJSXElements(localComponentName)
+            .find(j.JSXIdentifier, {
+              name: localComponentName,
+            })
+            .forEach(nodePath => {
+              nodePath.node.name = 'ConfigProvider';
+
+              addSubmoduleImport(j, root, antdPkgName, 'ConfigProvider');
+            });
+        } else {
+          addSubmoduleImport(
+            j,
+            root,
+            antdPkgName,
+            'ConfigProvider',
+            localComponentName,
+          );
+        }
       });
 
     return hasChanged;
@@ -38,25 +59,12 @@ module.exports = (file, api, options) => {
   // step2. add ConfigProvider import from antd
   // step3. cleanup antd import if empty
   let hasChanged = false;
-  hasChanged = removeAntdLocaleProviderImport(j, root) || hasChanged;
+  hasChanged = renameAntdLocaleProviderImport(j, root) || hasChanged;
 
   if (hasChanged) {
-    if (localComponentName === 'LocaleProvider') {
-      root
-        .findJSXElements(localComponentName)
-        .find(j.JSXIdentifier, {
-          name: localComponentName,
-        })
-        .forEach(nodePath => {
-          nodePath.node.name = 'ConfigProvider';
-
-          addSubmoduleImport(j, root, 'antd', 'ConfigProvider');
-        });
-    } else {
-      addSubmoduleImport(j, root, 'antd', 'ConfigProvider', localComponentName);
-    }
-
-    removeEmptyModuleImport(j, root, 'antd');
+    antdPkgNames.forEach(antdPkgName => {
+      removeEmptyModuleImport(j, root, antdPkgName);
+    });
   }
 
   return hasChanged

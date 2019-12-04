@@ -4,7 +4,7 @@ jest.mock('../v3-Component-to-compatible', () => {
   });
 });
 
-const tests = ['basic', 'alias-import'];
+const tests = ['basic', 'forked-basic', 'alias-import', 'forked-alias-import'];
 
 const defineTest = require('jscodeshift/dist/testUtils').defineTest;
 
@@ -12,6 +12,11 @@ const testUnit = 'v3-Component-to-compatible';
 
 describe(testUnit, () => {
   tests.forEach(test =>
-    defineTest(__dirname, testUnit, null, `${testUnit}/${test}`),
+    defineTest(
+      __dirname,
+      testUnit,
+      { antdPkgNames: ['antd', '@forked/antd'] },
+      `${testUnit}/${test}`,
+    ),
   );
 });

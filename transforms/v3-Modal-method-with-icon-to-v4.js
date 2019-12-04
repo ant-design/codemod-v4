@@ -10,6 +10,7 @@ const modalMethodNames = ['info', 'success', 'error', 'warning', 'confirm'];
 module.exports = (file, api, options) => {
   const j = api.jscodeshift;
   const root = j(file.source);
+  const antdPkgNames = options.antdPkgNames || ['antd'];
 
   // rename old Model.method() calls with `icon#string` argument
   function renameV3ModalMethodCalls(j, root) {
@@ -20,7 +21,7 @@ module.exports = (file, api, options) => {
         path =>
           path.node.name === 'Modal' &&
           path.parent.node.type === 'ImportSpecifier' &&
-          path.parent.parent.node.source.value === 'antd',
+          antdPkgNames.includes(path.parent.parent.node.source.value),
       )
       .forEach(path => {
         const localComponentName = path.parent.node.local.name;
@@ -90,7 +91,9 @@ module.exports = (file, api, options) => {
   hasChanged = renameV3ModalMethodCalls(j, root) || hasChanged;
 
   if (hasChanged) {
-    removeEmptyModuleImport(j, root, 'antd');
+    antdPkgNames.forEach(antdPkgName => {
+      removeEmptyModuleImport(j, root, antdPkgName);
+    });
   }
 
   return hasChanged

@@ -180,7 +180,15 @@ function addStyleModuleImport(j, root, pkgName) {
   throw new Error(`No ${pkgName} import found!`);
 }
 
+function parseStrToArray(antdPkgNames) {
+  return (antdPkgNames || '')
+    .split(',')
+    .filter(n => n)
+    .map(n => n.trim());
+}
+
 module.exports = {
+  parseStrToArray,
   addModuleDefaultImport,
   addStyleModuleImport,
   addSubmoduleImport,

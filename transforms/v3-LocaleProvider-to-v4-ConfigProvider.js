@@ -1,10 +1,14 @@
+const {
+  parseStrToArray,
+  removeEmptyModuleImport,
+  addSubmoduleImport,
+} = require('./utils');
 const { printOptions } = require('./utils/config');
-const { removeEmptyModuleImport, addSubmoduleImport } = require('./utils');
 
 module.exports = (file, api, options) => {
   const j = api.jscodeshift;
   const root = j(file.source);
-  const antdPkgNames = options.antdPkgNames || ['antd'];
+  const antdPkgNames = parseStrToArray(options.antdPkgNames || 'antd');
 
   // rename old LocaleProvider imports
   function renameAntdLocaleProviderImport(j, root) {

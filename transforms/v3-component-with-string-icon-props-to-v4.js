@@ -1,4 +1,8 @@
-const { removeEmptyModuleImport, addSubmoduleImport } = require('./utils');
+const {
+  parseStrToArray,
+  removeEmptyModuleImport,
+  addSubmoduleImport,
+} = require('./utils');
 const { printOptions } = require('./utils/config');
 const {
   createIconJSXElement,
@@ -10,7 +14,7 @@ const v3ComponentsWithIconPropString = ['Avatar', 'Button', 'Result'];
 module.exports = (file, api, options) => {
   const j = api.jscodeshift;
   const root = j(file.source);
-  const antdPkgNames = options.antdPkgNames || ['antd'];
+  const antdPkgNames = parseStrToArray(options.antdPkgNames || 'antd');
 
   // rename v3 component with `icon#string` prop
   function renameV3ComponentWithIconPropImport(j, root) {

@@ -1,4 +1,8 @@
-const { removeEmptyModuleImport, addSubmoduleImport } = require('./utils');
+const {
+  parseStrToArray,
+  removeEmptyModuleImport,
+  addSubmoduleImport,
+} = require('./utils');
 const { printOptions } = require('./utils/config');
 const {
   getV4IconComponentName,
@@ -10,7 +14,7 @@ const modalMethodNames = ['info', 'success', 'error', 'warning', 'confirm'];
 module.exports = (file, api, options) => {
   const j = api.jscodeshift;
   const root = j(file.source);
-  const antdPkgNames = options.antdPkgNames || ['antd'];
+  const antdPkgNames = parseStrToArray(options.antdPkgNames || 'antd');
 
   // rename old Model.method() calls with `icon#string` argument
   function renameV3ModalMethodCalls(j, root) {

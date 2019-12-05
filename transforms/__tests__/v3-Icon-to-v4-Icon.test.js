@@ -12,6 +12,11 @@ const testUnit = 'v3-Icon-to-v4-Icon';
 
 describe(testUnit, () => {
   tests.forEach(test =>
-    defineTest(__dirname, testUnit, null, `${testUnit}/${test}`),
+    defineTest(
+      __dirname,
+      testUnit,
+      { antdPkgNames: ['antd', '@forked/antd'].join(',') },
+      `${testUnit}/${test}`,
+    ),
   );
 });

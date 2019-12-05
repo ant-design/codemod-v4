@@ -3,6 +3,7 @@ const {
   addSubmoduleImport,
   addStyleModuleImport,
   removeEmptyModuleImport,
+  parseStrToArray,
 } = require('./utils');
 
 const deprecatedComponentNames = ['Form', 'Mention'];
@@ -10,7 +11,7 @@ const deprecatedComponentNames = ['Form', 'Mention'];
 module.exports = (file, api, options) => {
   const j = api.jscodeshift;
   const root = j(file.source);
-  const antdPkgNames = options.antdPkgNames || ['antd'];
+  const antdPkgNames = parseStrToArray(options.antdPkgNames || 'antd');
 
   const importStyles = 'importStyles' in options ? options.importStyles : true;
 

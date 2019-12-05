@@ -1,6 +1,7 @@
 const { printOptions } = require('./utils/config');
 const { getV4IconComponentName } = require('./utils/icon');
 const {
+  parseStrToArray,
   removeEmptyModuleImport,
   addSubmoduleImport,
   addModuleDefaultImport,
@@ -64,7 +65,7 @@ function iconContainLiteralTypeAndThemeProp(jsxElement) {
 module.exports = (file, api, options) => {
   const j = api.jscodeshift;
   const root = j(file.source);
-  const antdPkgNames = options.antdPkgNames || ['antd'];
+  const antdPkgNames = parseStrToArray(options.antdPkgNames || 'antd');
 
   function rewriteToV4DefaultIcon(j, root, localComponentName) {
     // add @ant-design/icons imports

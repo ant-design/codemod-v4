@@ -15,7 +15,7 @@ describe(testUnit, () => {
     defineTest(
       __dirname,
       testUnit,
-      { antdPkgNames: ['antd', '@forked/antd'] },
+      { antdPkgNames: ['antd', '@forked/antd'].join(',') },
       `${testUnit}/${test}`,
     ),
   );

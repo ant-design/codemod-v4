@@ -29,6 +29,7 @@ module.exports = (file, api, options) => {
       )
       .forEach(path => {
         const localComponentName = path.parent.node.local.name;
+        const antdPkgName = path.parent.parent.node.source.value;
 
         root
           .find(j.CallExpression, {
@@ -75,12 +76,11 @@ module.exports = (file, api, options) => {
               );
               iconProperty.value = iconJSXElement;
 
-              addSubmoduleImport(
-                j,
-                root,
-                '@ant-design/icons',
-                v4IconComponentName,
-              );
+              addSubmoduleImport(j, root, {
+                moduleName: '@ant-design/icons',
+                importedName: v4IconComponentName,
+                before: antdPkgName,
+              });
               hasChanged = true;
             }
           });

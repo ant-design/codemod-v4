@@ -38,7 +38,10 @@ module.exports = (file, api, options) => {
         const outlinedIconName = importComponentName + 'Outlined';
 
         if (localComponentName === importComponentName) {
-          addSubmoduleImport(j, root, '@ant-design/icons', outlinedIconName);
+          addSubmoduleImport(j, root, {
+            moduleName: '@ant-design/icons',
+            importedName: outlinedIconName,
+          });
           if (localComponentName === importComponentName) {
             root
               .findJSXElements(localComponentName)
@@ -50,13 +53,11 @@ module.exports = (file, api, options) => {
               });
           }
         } else {
-          addSubmoduleImport(
-            j,
-            root,
-            '@ant-design/icons',
-            outlinedIconName,
-            localComponentName,
-          );
+          addSubmoduleImport(j, root, {
+            moduleName: '@ant-design/icons',
+            importedName: outlinedIconName,
+            localName: localComponentName,
+          });
         }
       });
 

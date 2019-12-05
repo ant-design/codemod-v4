@@ -43,16 +43,17 @@ module.exports = (file, api, options) => {
             .forEach(nodePath => {
               nodePath.node.name = 'ConfigProvider';
 
-              addSubmoduleImport(j, root, antdPkgName, 'ConfigProvider');
+              addSubmoduleImport(j, root, {
+                moduleName: antdPkgName,
+                importedName: 'ConfigProvider',
+              });
             });
         } else {
-          addSubmoduleImport(
-            j,
-            root,
-            antdPkgName,
-            'ConfigProvider',
-            localComponentName,
-          );
+          addSubmoduleImport(j, root, {
+            moduleName: antdPkgName,
+            importedName: 'ConfigProvider',
+            localName: localComponentName,
+          });
         }
       });
 

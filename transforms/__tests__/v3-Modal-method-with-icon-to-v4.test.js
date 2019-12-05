@@ -7,7 +7,7 @@ jest.mock('../v3-Modal-method-with-icon-to-v4', () => {
   );
 });
 
-const tests = ['basic'];
+const tests = ['basic', 'forked-misc'];
 
 const defineTest = require('jscodeshift/dist/testUtils').defineTest;
 

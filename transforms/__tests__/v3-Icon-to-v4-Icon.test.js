@@ -4,7 +4,14 @@ jest.mock('../v3-Icon-to-v4-Icon', () => {
   });
 });
 
-const tests = ['basic', 'icon-static-methods', 'misc'];
+const tests = [
+  'basic',
+  'icon-static-methods',
+  'misc',
+  'forked-basic',
+  'forked-icon-static-methods',
+  'forked-misc',
+];
 
 const defineTest = require('jscodeshift/dist/testUtils').defineTest;
 
@@ -15,7 +22,11 @@ describe(testUnit, () => {
     defineTest(
       __dirname,
       testUnit,
-      { antdPkgNames: ['antd', '@forked/antd'].join(',') },
+      {
+        antdPkgNames: ['antd', '@forked/antd', '@alipay/bigfish/antd'].join(
+          ',',
+        ),
+      },
       `${testUnit}/${test}`,
     ),
   );

@@ -67,22 +67,31 @@ module.exports = (file, api, options) => {
   const root = j(file.source);
   const antdPkgNames = parseStrToArray(options.antdPkgNames || 'antd');
 
-  function rewriteToV4DefaultIcon(j, root, localComponentName) {
+  function rewriteToV4DefaultIcon(j, root, { localName, before }) {
     // add @ant-design/icons imports
-    addModuleDefaultImport(j, root, '@ant-design/icons', localComponentName);
+    addModuleDefaultImport(j, root, {
+      moduleName: '@ant-design/icons',
+      localName: localName,
+      before,
+    });
   }
 
-  function rewriteToCompatibleIcon(j, root, localComponentName, jsxElement) {
+  function rewriteToCompatibleIcon(j, root, { jsxElement, before }) {
     // rename name to `LegacyIcon`
     jsxElement.openingElement.name.name = 'LegacyIcon';
     if (jsxElement.closingElement) {
       jsxElement.closingElement.name.name = 'LegacyIcon';
     }
     // add @ant-design/compatible imports
-    addSubmoduleImport(j, root, '@ant-design/compatible', 'Icon', 'LegacyIcon');
+    addSubmoduleImport(j, root, {
+      moduleName: '@ant-design/compatible',
+      importedName: 'Icon',
+      localName: 'LegacyIcon',
+      before,
+    });
   }
 
-  function rewriteToSepcificV4Icon(j, root, localComponentName, jsxElement) {
+  function rewriteToSepcificV4Icon(j, root, { jsxElement, before }) {
     const node = jsxElement.openingElement;
     const typeAttr = node.attributes.find(attr => attr.name.name === 'type');
     const themeAttr = node.attributes.find(attr => attr.name.name === 'theme');
@@ -104,33 +113,37 @@ module.exports = (file, api, options) => {
         attr => !['theme', 'type'].includes(attr.name.name),
       );
       // add a new import for v4 icon component
-      addSubmoduleImport(j, root, '@ant-design/icons', v4IconComponentName);
+      addSubmoduleImport(j, root, {
+        moduleName: '@ant-design/icons',
+        importedName: v4IconComponentName,
+        before,
+      });
       hasChanged = true;
     }
   }
 
-  function rewriteOldIconImport(j, root, localComponentName) {
+  function rewriteOldIconImport(j, root, { localName, before }) {
     // 1. 找到符合条件的改写为 import Icon from '@ant-design/icons'
     //    条件为 children 属性为 不为空 或者 component 属性不为空
     // 2. 找到符合条件的改写为 import { SpecificIcon } from '@ant-design/icons'
     //    条件为 type 属性为 string, 且 theme 属性为 string
     // 不符合的统一改写为 import { Icon as LegacyIcon } '@ant-design/compatible'
-    root.findJSXElements(localComponentName).forEach(nodePath => {
+    root.findJSXElements(localName).forEach(nodePath => {
       const jsxElement = nodePath.node;
       if (
         iconContainValidChildren(jsxElement) ||
         iconContainValidComponentProp(jsxElement)
       ) {
-        rewriteToV4DefaultIcon(j, root, localComponentName);
+        rewriteToV4DefaultIcon(j, root, { localName, before });
         return;
       }
 
       if (iconContainLiteralTypeAndThemeProp(jsxElement)) {
-        rewriteToSepcificV4Icon(j, root, localComponentName, jsxElement);
+        rewriteToSepcificV4Icon(j, root, { localName, jsxElement, before });
         return;
       }
 
-      rewriteToCompatibleIcon(j, root, localComponentName, jsxElement);
+      rewriteToCompatibleIcon(j, root, { localName, jsxElement, before });
     });
   }
 
@@ -152,6 +165,7 @@ module.exports = (file, api, options) => {
       .forEach(path => {
         hasChanged = true;
         const localComponentName = path.parent.node.local.name;
+        const antdPkgName = path.parent.parent.node.source.value;
 
         const importDeclaration = path.parent.parent.node;
         // remove old imports
@@ -160,15 +174,21 @@ module.exports = (file, api, options) => {
             !specifier.imported || specifier.imported.name !== 'Icon',
         );
 
-        rewriteOldIconImport(j, root, localComponentName);
-        rewriteAntdStaticIconMethods(j, root, localComponentName);
+        rewriteOldIconImport(j, root, {
+          localName: localComponentName,
+          before: antdPkgName,
+        });
+        rewriteAntdStaticIconMethods(j, root, {
+          localName: localComponentName,
+          before: antdPkgName,
+        });
       });
 
     return hasChanged;
   }
 
   // rewrite v3 Icon static methods
-  function rewriteAntdStaticIconMethods(j, root, localComponentName) {
+  function rewriteAntdStaticIconMethods(j, root, { localName, before }) {
     let hasChanged = false;
     const staticMethodCallExpressions = root
       .find(j.CallExpression, {
@@ -176,7 +196,7 @@ module.exports = (file, api, options) => {
           type: 'MemberExpression',
           object: {
             type: 'Identifier',
-            name: localComponentName,
+            name: localName,
           },
           property: {
             type: 'Identifier',
@@ -188,7 +208,11 @@ module.exports = (file, api, options) => {
 
     staticMethodCallExpressions.forEach(({ node }) => {
       const staticMethod = node.property.name;
-      addSubmoduleImport(j, root, '@ant-design/icons', staticMethod);
+      addSubmoduleImport(j, root, {
+        moduleName: '@ant-design/icons',
+        importedName: staticMethod,
+        before,
+      });
     });
 
     staticMethodCallExpressions.forEach(nodePath => {

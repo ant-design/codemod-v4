@@ -1,4 +1,5 @@
-import { Result, Button } from 'antd';
+/* blablabla */
+import { Result, Button } from '@forked/antd';
 
 ReactDOM.render(
   <Result

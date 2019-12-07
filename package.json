@@ -1,9 +1,9 @@
 {
-  "name": "@ant-design/codemod",
+  "name": "@ant-design/codemod-v4",
   "version": "0.1.5",
   "description": "Codemod for ant design v4 upgrade",
   "bin": {
-    "antd-codemod": "./bin/antd-codemod.js"
+    "antd4-codemod": "./bin/antd-codemod.js"
   },
   "files": [
     "bin",
@@ -14,13 +14,13 @@
     "codemod",
     "antd"
   ],
-  "homepage": "https://github.com/ant-design/codemod",
+  "homepage": "https://github.com/ant-design/codemod-v4",
   "repository": {
     "type": "git",
-    "url": "git@github.com:ant-design/codemod.git"
+    "url": "git@github.com:ant-design/codemod-v4.git"
   },
   "bugs": {
-    "url": "http://github.com/ant-design/codemod/issues"
+    "url": "http://github.com/ant-design/codemod-v4/issues"
   },
   "license": "MIT",
   "engines": {

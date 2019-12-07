@@ -32,7 +32,8 @@ function insertImportBefore(j, root, { importStatement, beforeModule }) {
 
   const firstNode = getFirstNode(j, root);
   if (
-    firstBeforeModuleImport.paths()[0] === firstNode ||
+    (firstBeforeModuleImport.paths()[0] &&
+      firstBeforeModuleImport.paths()[0].node === firstNode) ||
     !firstBeforeModuleImport
   ) {
     // 保留首行的注释

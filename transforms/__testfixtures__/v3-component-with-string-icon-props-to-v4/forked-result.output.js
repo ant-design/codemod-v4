@@ -1,5 +1,6 @@
 /* blablabla */
 import { QuestionOutlined } from '@ant-design/icons';
+
 import { Result, Button } from '@forked/antd';
 
 ReactDOM.render(

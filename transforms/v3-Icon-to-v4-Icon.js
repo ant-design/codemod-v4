@@ -74,6 +74,7 @@ module.exports = (file, api, options) => {
       localName: localName,
       before,
     });
+    return true;
   }
 
   function rewriteToCompatibleIcon(j, root, { jsxElement, before }) {
@@ -102,24 +103,27 @@ module.exports = (file, api, options) => {
       themeAttr && themeAttr.value.value,
     );
 
-    if (v4IconComponentName) {
-      node.name.name = v4IconComponentName;
-      if (jsxElement.closingElement) {
-        jsxElement.closingElement.name.name = v4IconComponentName;
-      }
-
-      // remove props `type` and `theme`
-      node.attributes = node.attributes.filter(
-        attr => !['theme', 'type'].includes(attr.name.name),
-      );
-      // add a new import for v4 icon component
-      addSubmoduleImport(j, root, {
-        moduleName: '@ant-design/icons',
-        importedName: v4IconComponentName,
-        before,
-      });
-      hasChanged = true;
+    if (!v4IconComponentName) {
+      // FIXME: 输出这里的结果到 Summary
+      return false;
     }
+
+    node.name.name = v4IconComponentName;
+    if (jsxElement.closingElement) {
+      jsxElement.closingElement.name.name = v4IconComponentName;
+    }
+
+    // remove props `type` and `theme`
+    node.attributes = node.attributes.filter(
+      attr => !['theme', 'type'].includes(attr.name.name),
+    );
+    // add a new import for v4 icon component
+    addSubmoduleImport(j, root, {
+      moduleName: '@ant-design/icons',
+      importedName: v4IconComponentName,
+      before,
+    });
+    return true;
   }
 
   function rewriteOldIconImport(j, root, { localName, before }) {
@@ -134,13 +138,17 @@ module.exports = (file, api, options) => {
         iconContainValidChildren(jsxElement) ||
         iconContainValidComponentProp(jsxElement)
       ) {
-        rewriteToV4DefaultIcon(j, root, { localName, before });
-        return;
+        if (rewriteToV4DefaultIcon(j, root, { localName, before })) {
+          return;
+        }
       }
 
       if (iconContainLiteralTypeAndThemeProp(jsxElement)) {
-        rewriteToSepcificV4Icon(j, root, { localName, jsxElement, before });
-        return;
+        if (
+          rewriteToSepcificV4Icon(j, root, { localName, jsxElement, before })
+        ) {
+          return;
+        }
       }
 
       rewriteToCompatibleIcon(j, root, { localName, jsxElement, before });

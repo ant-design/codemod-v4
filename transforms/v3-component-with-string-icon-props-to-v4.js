@@ -1,4 +1,8 @@
-const { removeEmptyModuleImport, addSubmoduleImport } = require('./utils');
+const {
+  parseStrToArray,
+  removeEmptyModuleImport,
+  addSubmoduleImport,
+} = require('./utils');
 const { printOptions } = require('./utils/config');
 const {
   createIconJSXElement,
@@ -10,7 +14,7 @@ const v3ComponentsWithIconPropString = ['Avatar', 'Button', 'Result'];
 module.exports = (file, api, options) => {
   const j = api.jscodeshift;
   const root = j(file.source);
-  const antdPkgNames = options.antdPkgNames || ['antd'];
+  const antdPkgNames = parseStrToArray(options.antdPkgNames || 'antd');
 
   // rename v3 component with `icon#string` prop
   function renameV3ComponentWithIconPropImport(j, root) {
@@ -25,6 +29,7 @@ module.exports = (file, api, options) => {
       )
       .forEach(path => {
         const localComponentName = path.parent.node.local.name;
+        const antdPkgName = path.parent.parent.node.source.value;
 
         root
           .findJSXElements(localComponentName)
@@ -51,12 +56,11 @@ module.exports = (file, api, options) => {
               // we need a brace to wrap a jsxElement to pass Icon prop
               path.parent.node.value = j.jsxExpressionContainer(iconJSXElement);
 
-              addSubmoduleImport(
-                j,
-                root,
-                '@ant-design/icons',
-                v4IconComponentName,
-              );
+              addSubmoduleImport(j, root, {
+                moduleName: '@ant-design/icons',
+                importedName: v4IconComponentName,
+                before: antdPkgName,
+              });
               hasChanged = true;
             }
           });

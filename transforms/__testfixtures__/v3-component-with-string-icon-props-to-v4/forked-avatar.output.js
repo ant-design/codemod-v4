@@ -1,5 +1,5 @@
 import { UserFilled, UserOutlined } from '@ant-design/icons';
-import { Avatar, Badge } from 'antd';
+import { Avatar, Badge } from '@forked/antd';
 
 ReactDOM.render(
   <div>

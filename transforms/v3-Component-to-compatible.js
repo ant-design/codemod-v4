@@ -3,6 +3,7 @@ const {
   addSubmoduleImport,
   addStyleModuleImport,
   removeEmptyModuleImport,
+  parseStrToArray,
 } = require('./utils');
 
 const deprecatedComponentNames = ['Form', 'Mention'];
@@ -10,9 +11,7 @@ const deprecatedComponentNames = ['Form', 'Mention'];
 module.exports = (file, api, options) => {
   const j = api.jscodeshift;
   const root = j(file.source);
-  const antdPkgNames = options.antdPkgNames || ['antd'];
-
-  const importStyles = 'importStyles' in options ? options.importStyles : true;
+  const antdPkgNames = parseStrToArray(options.antdPkgNames || 'antd');
 
   // import deprecated components from '@ant-design/compatible'
   function importDeprecatedComponent(j, root) {
@@ -31,6 +30,7 @@ module.exports = (file, api, options) => {
       .forEach(path => {
         hasChanged = true;
         const importedComponentName = path.parent.node.imported.name;
+        const antdPkgName = path.parent.parent.node.source.value;
 
         // remove old imports
         const importDeclaration = path.parent.parent.node;
@@ -42,21 +42,17 @@ module.exports = (file, api, options) => {
 
         // add new import from '@ant-design/compatible'
         const localComponentName = path.parent.node.local.name;
-        addSubmoduleImport(
-          j,
-          root,
-          '@ant-design/compatible',
-          importedComponentName,
-          localComponentName,
-        );
+        addSubmoduleImport(j, root, {
+          moduleName: '@ant-design/compatible',
+          importedName: importedComponentName,
+          localName: localComponentName,
+          before: antdPkgName,
+        });
 
-        if (importStyles) {
-          addStyleModuleImport(
-            j,
-            root,
-            '@ant-design/compatible/assets/index.css',
-          );
-        }
+        addStyleModuleImport(j, root, {
+          moduleName: '@ant-design/compatible/assets/index.css',
+          after: '@ant-design/compatible',
+        });
       });
 
     return hasChanged;

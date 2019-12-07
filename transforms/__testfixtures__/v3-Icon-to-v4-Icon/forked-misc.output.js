@@ -1,5 +1,5 @@
 import { ClockCircleOutlined, SmileTwoTone } from '@ant-design/icons';
-import { Result, Timeline } from '@forked/antd';
+import { Timeline } from '@forked/antd';
 import { Result } from 'antd';
 
 ReactDOM.render(

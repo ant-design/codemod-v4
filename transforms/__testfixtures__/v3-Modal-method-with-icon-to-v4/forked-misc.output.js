@@ -1,4 +1,5 @@
 import { AntDesignOutlined, MinusOutlined, PlusOutlined, QuestionOutlined } from '@ant-design/icons';
+import { Modal } from 'antd';
 import { Modal as AModal } from '@forked/antd';
 
 function showConfirm() {

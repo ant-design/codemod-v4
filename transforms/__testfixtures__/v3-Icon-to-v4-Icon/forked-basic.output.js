@@ -1,5 +1,5 @@
-import { Icon as LegacyIcon } from '@ant-design/compatible';
 import Icon, { CodeFilled, CodeOutlined, SmileOutlined, SmileTwoTone } from '@ant-design/icons';
+import { Icon as LegacyIcon } from '@ant-design/compatible';
 
 const Component = () => {
   return <CodeFilled />;

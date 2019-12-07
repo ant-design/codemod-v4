@@ -1,3 +1,4 @@
+// hello
 import { Result, Button } from 'antd';
 
 ReactDOM.render(

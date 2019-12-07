@@ -1,4 +1,8 @@
-const { removeEmptyModuleImport, addSubmoduleImport } = require('./utils');
+const {
+  parseStrToArray,
+  removeEmptyModuleImport,
+  addSubmoduleImport,
+} = require('./utils');
 const { printOptions } = require('./utils/config');
 const {
   getV4IconComponentName,
@@ -10,7 +14,7 @@ const modalMethodNames = ['info', 'success', 'error', 'warning', 'confirm'];
 module.exports = (file, api, options) => {
   const j = api.jscodeshift;
   const root = j(file.source);
-  const antdPkgNames = options.antdPkgNames || ['antd'];
+  const antdPkgNames = parseStrToArray(options.antdPkgNames || 'antd');
 
   // rename old Model.method() calls with `icon#string` argument
   function renameV3ModalMethodCalls(j, root) {
@@ -25,6 +29,7 @@ module.exports = (file, api, options) => {
       )
       .forEach(path => {
         const localComponentName = path.parent.node.local.name;
+        const antdPkgName = path.parent.parent.node.source.value;
 
         root
           .find(j.CallExpression, {
@@ -71,12 +76,11 @@ module.exports = (file, api, options) => {
               );
               iconProperty.value = iconJSXElement;
 
-              addSubmoduleImport(
-                j,
-                root,
-                '@ant-design/icons',
-                v4IconComponentName,
-              );
+              addSubmoduleImport(j, root, {
+                moduleName: '@ant-design/icons',
+                importedName: v4IconComponentName,
+                before: antdPkgName,
+              });
               hasChanged = true;
             }
           });

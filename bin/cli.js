@@ -8,6 +8,7 @@ const updateCheck = require('update-check');
 
 const jscodeshiftBin = require.resolve('.bin/jscodeshift');
 const pkg = require('../package.json');
+const summary = require('../transforms/utils/summary');
 
 const transformersDir = path.join(__dirname, '../transforms');
 
@@ -102,12 +103,12 @@ async function run(filePath, args) {
         chalk.bgYellow.bold('JS/JSX files to convert'),
         jsPaths.length,
       );
-      transform(transformer, 'babylon', jsPaths, injectStyle);
+      await transform(transformer, 'babylon', jsPaths, injectStyle);
     }
 
     if (tsPaths.length) {
       console.log(chalk.bgBlue.bold('TS/TSX files to convert'), jsPaths.length);
-      transform(transformer, 'tsx', tsPaths, injectStyle);
+      await transform(transformer, 'tsx', tsPaths, injectStyle);
     }
   }
 }
@@ -147,7 +148,28 @@ async function bootstrap() {
     console.log(chalk.yellow('Invalid dir:', dir, ', please pass a valid dir'));
     process.exit(1);
   }
-  run(dir, args);
+  summary.start();
+  await run(dir, args);
+  try {
+    const output = await summary.output();
+    if (output) {
+      console.log('----------- antd4 codemod summary -----------\n\n');
+      console.table(
+        output
+          .filter(n => Array.isArray(n) && n.length >= 3)
+          .map(n => ({
+            filename: n[0],
+            source: n[1],
+            message: n[2],
+          })),
+      );
+      console.log(
+        '\n\n----------- Thanks for using @ant-design/codemod -----------',
+      );
+    }
+  } catch (err) {
+    console.log('skip summary due to', err);
+  }
 }
 
 module.exports = {

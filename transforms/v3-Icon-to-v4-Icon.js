@@ -1,3 +1,4 @@
+const summary = require('./utils/summary');
 const { printOptions } = require('./utils/config');
 const { getV4IconComponentName } = require('./utils/icon');
 const {
@@ -104,7 +105,9 @@ module.exports = (file, api, options) => {
     );
 
     if (!v4IconComponentName) {
-      // FIXME: 输出这里的结果到 Summary
+      const message =
+        'Contains an invalid icon, please check it at https://ant.design/components/icon';
+      summary.appendLine(file.path, j(jsxElement).toSource(), message);
       return false;
     }
 

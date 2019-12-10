@@ -1,29 +1,29 @@
-[English](./README.md) | 简体中文
+English | [简体中文](./README.zh-CN.md)
 
 # Ant Design v4 Codemod
 
-A collection of codemod scripts that help upgrade antd v4 using [jscodeshift](https://github.com/facebook/jscodeshift).(Inspired by [react-codemod](https://github.com/reactjs/react-codemod))
+一组帮助你升级到 antd v4 的 codemod 脚本集合，基于 [jscodeshift](https://github.com/facebook/jscodeshift) 构建。(受 [react-codemod](https://github.com/reactjs/react-codemod) 启发)
 
 [![NPM version](https://img.shields.io/npm/v/@ant-design/codemod-v4.svg?style=flat)](https://npmjs.org/package/@ant-design/codemod-v4)
 [![NPM downloads](http://img.shields.io/npm/dm/@ant-design/codemod-v4.svg?style=flat)](https://npmjs.org/package/@ant-design/codemod-v4)
 [![CircleCI](https://circleci.com/gh/ant-design/codemod-v4.svg?style=svg)](https://circleci.com/gh/ant-design/codemod-v4)
 
-## Usage
+## 使用
 
 ```shell
-# global installation
+# 全局安装
 npm i -g @ant-design/codemod-v4
 antd4-codemod src
 
-# use npx
+# 使用 npx
 npx -p @ant-design/codemod-v4 antd4-codemod src
 ```
 
-## Codemod scripts introduction
+## Codemod 脚本包括:
 
 #### `v3-Component-to-compatible`
 
-Replace deprecated `Form` and `Mention` from `@ant-design/compatible`:
+将已废弃的 `Form` 和 `Mention` 组件通过 `@ant-design/compatible` 包引入:
 
 ```diff
 - import { Form, Input, Button, Mention } from 'antd';
@@ -50,7 +50,7 @@ Replace deprecated `Form` and `Mention` from `@ant-design/compatible`:
 
 #### `v3-component-with-string-icon-props-to-v4`
 
-Update component which contains string icon props with specific v4 Icon component from `@ant-design/icons`.
+将那些包含字符串 icon props 的组件转换成从 `@ant-design/icons` 中特定组件引入。
 
 ```diff
 - import { Avatar, Button, Result } from 'antd';
@@ -76,7 +76,7 @@ Update component which contains string icon props with specific v4 Icon componen
 
 #### `v3-Icon-to-v4-Icon`
 
-Replace v3 Icon with specific v4 Icon component.
+将 v3 Icon 组件转换成 `@ant-design/icons` 中特定组件引入。
 
 ```diff
 - import { Icon, Input } from 'antd';
@@ -113,7 +113,7 @@ Replace v3 Icon with specific v4 Icon component.
 
 #### `v3-LocaleProvider-to-v4-ConfigProvider`
 
-Replace v3 LocaleProvider with v4 ConfigProvider component.
+将 v3 LocaleProvider 组件转换成 v4 ConfigProvider 组件。
 
 ```diff
 - import { LocaleProvider } from 'antd';
@@ -131,7 +131,7 @@ Replace v3 LocaleProvider with v4 ConfigProvider component.
 
 #### `v3-Modal-method-with-icon-to-v4`
 
-Update `Modal.method()` which contains string icon property with specific v4 Icon component.
+将 `Modal.method()` 包含字符串 icon 属性的调用转换成从 `@ant-design/icons` 中特定组件引入。
 
 ```diff
 import { Modal } from 'antd';

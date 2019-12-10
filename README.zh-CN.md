@@ -10,6 +10,8 @@
 
 ## 使用
 
+在运行 codemode 脚本前，请先提交你的本地代码修改。
+
 ```shell
 # 全局安装
 npm i -g @ant-design/codemod-v4

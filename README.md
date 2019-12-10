@@ -10,6 +10,8 @@ A collection of codemod scripts that help upgrade antd v4 using [jscodeshift](ht
 
 ## Usage
 
+Before run codemod scripts, you'd better make sure to commit your local git changes firstly.
+
 ```shell
 # global installation
 npm i -g @ant-design/codemod-v4

@@ -34,7 +34,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@ant-design/compatible": "^0.0.1-alpha.5",
+    "@ant-design/compatible": "^0.0.1-alpha.7",
     "@ant-design/icons": "^4.0.0-alpha.11",
     "chalk": "^3.0.0",
     "execa": "^3.4.0",

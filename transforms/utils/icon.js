@@ -16,7 +16,11 @@ function getV4IconComponentName(type, theme) {
     return v4IconComponentName;
   }
 
-  console.warn(`The icon with type: ${type} and theme ${theme} cannot found`);
+  console.warn(
+    `The icon name '${type}'${
+      theme ? `with ${theme}` : ''
+    } cannot found, please check it at https://ant.design/components/icon`,
+  );
 }
 
 function createIconJSXElement(j, iconLocalName) {

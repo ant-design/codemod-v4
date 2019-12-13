@@ -105,9 +105,14 @@ module.exports = (file, api, options) => {
     );
 
     if (!v4IconComponentName) {
+      const location = jsxElement.loc.start;
       const message =
         'Contains an invalid icon, please check it at https://ant.design/components/icon';
-      summary.appendLine(file.path, j(jsxElement).toSource(), message);
+      summary.appendLine(
+        `${file.path} - ${location.line}:${location.column}`,
+        j(jsxElement).toSource(),
+        message,
+      );
       return false;
     }
 

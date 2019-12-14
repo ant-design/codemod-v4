@@ -152,8 +152,8 @@ async function bootstrap() {
   await run(dir, args);
   try {
     const output = await summary.output();
-    if (output) {
-      console.log('----------- antd4 codemod diagnosis -----------\n\n');
+    if (Array.isArray(output) && output.length) {
+      console.log('----------- antd4 codemod diagnosis -----------\n');
       output
         .filter(n => Array.isArray(n) && n.length >= 3)
         .forEach(n => {
@@ -165,7 +165,7 @@ async function bootstrap() {
         });
 
       console.log(
-        '\n\n----------- Thanks for using @ant-design/codemod -----------',
+        '\n----------- Thanks for using @ant-design/codemod -----------',
       );
     }
   } catch (err) {

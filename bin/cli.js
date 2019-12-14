@@ -152,19 +152,20 @@ async function bootstrap() {
   await run(dir, args);
   try {
     const output = await summary.output();
-    if (output) {
-      console.log('----------- antd4 codemod summary -----------\n\n');
-      console.table(
-        output
-          .filter(n => Array.isArray(n) && n.length >= 3)
-          .map(n => ({
-            filename: n[0],
-            source: n[1],
-            message: n[2],
-          })),
-      );
+    if (Array.isArray(output) && output.length) {
+      console.log('----------- antd4 codemod diagnosis -----------\n');
+      output
+        .filter(n => Array.isArray(n) && n.length >= 3)
+        .forEach(n => {
+          const [filename, source, message] = n;
+          console.log(`file: ${filename}`);
+          console.log('>>>', chalk.yellow(source));
+          console.log(message);
+          console.log('\n');
+        });
+
       console.log(
-        '\n\n----------- Thanks for using @ant-design/codemod -----------',
+        '\n----------- Thanks for using @ant-design/codemod -----------',
       );
     }
   } catch (err) {

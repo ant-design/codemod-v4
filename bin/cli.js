@@ -14,7 +14,7 @@ const transformersDir = path.join(__dirname, '../transforms');
 
 // override default babylon parser config to enable `decorator-legacy`
 // https://github.com/facebook/jscodeshift/blob/master/parser/babylon.js
-const babylonConfig = path.join(__dirname, '../babylon.config.json');
+const babylonConfig = path.join(__dirname, './babylon.config.json');
 
 const transformers = [
   'v4-Icon-Outlined',

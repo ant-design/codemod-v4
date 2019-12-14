@@ -27,3 +27,5 @@ src
 /index.js
 .*
 assets/**/*.less
+__testfixtures__
+__tests__

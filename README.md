@@ -15,6 +15,8 @@ Before run codemod scripts, you'd better make sure to commit your local git chan
 ```shell
 # global installation
 npm i -g @ant-design/codemod-v4
+# or for yarn user
+#  yarn global add @ant-design/codemod-v4
 antd4-codemod src
 
 # use npx

@@ -15,6 +15,8 @@
 ```shell
 # 全局安装
 npm i -g @ant-design/codemod-v4
+# or for yarn user
+#  yarn global add @ant-design/codemod-v4
 antd4-codemod src
 
 # 使用 npx

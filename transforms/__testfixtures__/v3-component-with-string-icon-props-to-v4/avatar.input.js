@@ -21,3 +21,11 @@ ReactDOM.render(
   </div>,
   mountNode,
 );
+
+const CustomAvatar = (props) => {
+  return (
+    <Badge count={1}>
+      <Avatar shape="square" icon={props.icon} />
+    </Badge>
+  );
+}

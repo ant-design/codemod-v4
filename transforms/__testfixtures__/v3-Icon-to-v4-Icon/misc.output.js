@@ -1,4 +1,5 @@
 import { ClockCircleOutlined, SmileTwoTone } from '@ant-design/icons';
+import { Icon as LegacyIcon } from '@ant-design/compatible';
 import { Result, Timeline } from 'antd';
 
 ReactDOM.render(
@@ -21,3 +22,7 @@ ReactDOM.render(
   </Timeline>,
   mountNode,
 );
+
+const DynamicIcon = props => {
+  <LegacyIcon type={props.type} theme={props.theme} />
+}

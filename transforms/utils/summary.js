@@ -43,8 +43,17 @@ function cleanup() {
   fs.unlinkSync(summaryFilePath);
 }
 
+function addIconRelatedMsg(file, location, source) {
+  return appendLine(
+    `${file.path} - ${location.line}:${location.column}`,
+    source,
+    'Contains an invalid icon, please check it at https://ant.design/components/icon',
+  );
+}
+
 module.exports = {
   start,
   appendLine,
   output,
+  addIconRelatedMsg,
 };

@@ -4,6 +4,7 @@ const {
   addSubmoduleImport,
 } = require('./utils');
 const { printOptions } = require('./utils/config');
+const { addIconRelatedMsg } = require('./utils/summary');
 const {
   createIconJSXElement,
   getV4IconComponentName,
@@ -78,13 +79,8 @@ module.exports = (file, api, options) => {
                 return;
               } else {
                 const location = path.node.loc.start;
-                const message =
-                  'Contains an invalid icon, please check it at https://ant.design/components/icon';
-                summary.appendLine(
-                  `${file.path} - ${location.line}:${location.column}`,
-                  j(nodePath).toSource(),
-                  message,
-                );
+
+                addIconRelatedMsg(file, location, j(nodePath).toSource());
               }
             }
 

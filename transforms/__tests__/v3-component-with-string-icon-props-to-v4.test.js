@@ -9,11 +9,11 @@ jest.mock('../v3-component-with-string-icon-props-to-v4', () => {
 
 const tests = [
   'avatar',
-  // 'button',
-  // 'result',
-  // 'forked-avatar',
-  // 'forked-button',
-  // 'forked-result',
+  'button',
+  'result',
+  'forked-avatar',
+  'forked-button',
+  'forked-result',
 ];
 
 const defineTest = require('jscodeshift/dist/testUtils').defineTest;

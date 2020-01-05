@@ -4,6 +4,7 @@ const {
   addSubmoduleImport,
 } = require('./utils');
 const { printOptions } = require('./utils/config');
+const { addIconRelatedMsg } = require('./utils/summary');
 const {
   getV4IconComponentName,
   createIconJSXElement,

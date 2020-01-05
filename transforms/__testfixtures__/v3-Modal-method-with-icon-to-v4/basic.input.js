@@ -50,3 +50,11 @@ function warning() {
     content: 'some messages...some messages...',
   });
 }
+
+function warningWithProps(props) {
+  Modal.warning({
+    title: 'This is a warning message',
+    icon: props.icon,
+    content: 'some messages...some messages...',
+  });
+}

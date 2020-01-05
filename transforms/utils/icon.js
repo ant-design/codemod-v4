@@ -23,10 +23,10 @@ function getV4IconComponentName(type, theme) {
   );
 }
 
-function createIconJSXElement(j, iconLocalName) {
+function createIconJSXElement(j, iconLocalName, attrs = []) {
   const openingElement = j.jsxOpeningElement(
     j.jsxIdentifier(iconLocalName),
-    [],
+    attrs,
   );
   openingElement.selfClosing = true;
   return j.jsxElement(openingElement);

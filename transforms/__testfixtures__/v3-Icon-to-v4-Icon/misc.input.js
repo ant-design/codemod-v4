@@ -20,3 +20,7 @@ ReactDOM.render(
   </Timeline>,
   mountNode,
 );
+
+const DynamicIcon = props => {
+  <Icon type={props.type} theme={props.theme} />
+}

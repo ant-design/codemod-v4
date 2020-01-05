@@ -16,6 +16,37 @@ module.exports = (file, api, options) => {
   const root = j(file.source);
   const antdPkgNames = parseStrToArray(options.antdPkgNames || 'antd');
 
+  function importV4SpecificIcon(j, iconName, before) {
+    const iconJSXElement = createIconJSXElement(j, iconName);
+
+    addSubmoduleImport(j, root, {
+      moduleName: '@ant-design/icons',
+      importedName: iconName,
+      before,
+    });
+
+    return iconJSXElement;
+  }
+
+  function importLegacyIcon(j, iconProperty, before) {
+    // handle it with `@ant-design/compatible`
+    const typeAttr = j.jsxAttribute(
+      j.jsxIdentifier('type'),
+      j.jsxExpressionContainer(iconProperty.value),
+    );
+    const iconJSXElement = createIconJSXElement(j, 'LegacyIcon', [typeAttr]);
+
+    // add @ant-design/compatible imports
+    addSubmoduleImport(j, root, {
+      moduleName: '@ant-design/compatible',
+      importedName: 'Icon',
+      localName: 'LegacyIcon',
+      before,
+    });
+
+    return iconJSXElement;
+  }
+
   // rename old Model.method() calls with `icon#string` argument
   function renameV3ModalMethodCalls(j, root) {
     let hasChanged = false;
@@ -52,6 +83,8 @@ module.exports = (file, api, options) => {
               !nodePath.node.arguments[0] ||
               nodePath.node.arguments[0].type !== 'ObjectExpression'
             ) {
+              // FIXME: need log?
+              // but we cannot know it contains `icon` property
               return;
             }
 
@@ -59,30 +92,42 @@ module.exports = (file, api, options) => {
             const iconProperty = args.properties.find(
               property =>
                 property.key.type === 'Identifier' &&
-                property.key.name === 'icon' &&
-                property.value.type === 'StringLiteral',
+                property.key.name === 'icon',
             );
 
-            if (!iconProperty) {
+            // v3-Icon-to-v4-Icon should handle with JSXElement
+            if (!iconProperty || iconProperty.value.type === 'JSXElement') {
               return;
             }
 
-            const v3IconName = iconProperty.value.value;
-            const v4IconComponentName = getV4IconComponentName(v3IconName);
-            if (v4IconComponentName) {
-              const iconJSXElement = createIconJSXElement(
-                j,
-                v4IconComponentName,
-              );
-              iconProperty.value = iconJSXElement;
+            hasChanged = true;
 
-              addSubmoduleImport(j, root, {
-                moduleName: '@ant-design/icons',
-                importedName: v4IconComponentName,
-                before: antdPkgName,
-              });
-              hasChanged = true;
+            if (iconProperty.value.type === 'StringLiteral') {
+              const v3IconName = iconProperty.value.value;
+              const v4IconComponentName = getV4IconComponentName(v3IconName);
+              if (v4IconComponentName) {
+                const jsxElement = importV4SpecificIcon(
+                  j,
+                  v4IconComponentName,
+                  antdPkgName,
+                );
+                iconProperty.value = jsxElement;
+                return;
+              } else {
+                // FIXME: use parent jsxElement
+                const location = nodePath.node.loc.start;
+                const message =
+                  'Contains an invalid icon, please check it at https://ant.design/components/icon';
+                summary.appendLine(
+                  `${file.path} - ${location.line}:${location.column}`,
+                  j(nodePath).toSource(),
+                  message,
+                );
+              }
             }
+
+            const jsxElement = importLegacyIcon(j, iconProperty, antdPkgName);
+            iconProperty.value = jsxElement;
           });
       });
 

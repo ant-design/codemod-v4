@@ -4,6 +4,7 @@ const {
   addSubmoduleImport,
 } = require('./utils');
 const { printOptions } = require('./utils/config');
+const { addIconRelatedMsg } = require('./utils/summary');
 const {
   createIconJSXElement,
   getV4IconComponentName,
@@ -38,31 +39,69 @@ module.exports = (file, api, options) => {
               type: 'JSXIdentifier',
               name: 'icon',
             },
-            value: {
-              type: 'StringLiteral',
-            },
           })
-          .find(j.Literal)
-          .forEach(path => {
-            // TODO: 是否考虑将非 Literal 的值增加 warning 的 log
-            const v4IconComponentName = getV4IconComponentName(
-              path.value.value,
+          .filter(nodePath => {
+            return (
+              nodePath.node.type === 'StringLiteral' ||
+              nodePath.node.type !== 'JSXExpressionContainer'
             );
-            if (v4IconComponentName) {
-              const iconJSXElement = createIconJSXElement(
-                j,
-                v4IconComponentName,
-              );
-              // we need a brace to wrap a jsxElement to pass Icon prop
-              path.parent.node.value = j.jsxExpressionContainer(iconJSXElement);
+          })
+          .forEach(path => {
+            hasChanged = true;
 
-              addSubmoduleImport(j, root, {
-                moduleName: '@ant-design/icons',
-                importedName: v4IconComponentName,
-                before: antdPkgName,
-              });
-              hasChanged = true;
+            const iconProperty = path.value;
+
+            // v3-Icon-to-v4-Icon should handle with JSXElement
+            if (
+              iconProperty.value.type === 'JSXExpressionContainer' &&
+              iconProperty.value.expression.type === 'JSXElement'
+            ) {
+              return;
             }
+
+            if (iconProperty.value.type === 'StringLiteral') {
+              const v4IconComponentName = getV4IconComponentName(
+                iconProperty.value.value,
+              );
+              if (v4IconComponentName) {
+                const iconJSXElement = createIconJSXElement(
+                  j,
+                  v4IconComponentName,
+                );
+                // we need a brace to wrap a jsxElement to pass Icon prop
+                iconProperty.value = j.jsxExpressionContainer(iconJSXElement);
+
+                addSubmoduleImport(j, root, {
+                  moduleName: '@ant-design/icons',
+                  importedName: v4IconComponentName,
+                  before: antdPkgName,
+                });
+                return;
+              } else {
+                const location = path.node.loc.start;
+
+                addIconRelatedMsg(file, location, j(nodePath).toSource());
+              }
+            }
+
+            // handle it with `@ant-design/compatible`
+            const typeAttr = j.jsxAttribute(
+              j.jsxIdentifier('type'),
+              iconProperty.value,
+            );
+            const iconJSXElement = createIconJSXElement(j, 'LegacyIcon', [
+              typeAttr,
+            ]);
+            // we need a brace to wrap a jsxElement to pass Icon prop
+            iconProperty.value = j.jsxExpressionContainer(iconJSXElement);
+
+            // add @ant-design/compatible imports
+            addSubmoduleImport(j, root, {
+              moduleName: '@ant-design/compatible',
+              importedName: 'Icon',
+              localName: 'LegacyIcon',
+              before: antdPkgName,
+            });
           });
       });
 

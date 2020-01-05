@@ -1,4 +1,5 @@
 import { AntDesignOutlined, MinusOutlined, PlusOutlined, QuestionOutlined } from '@ant-design/icons';
+import { Icon as LegacyIcon } from '@ant-design/compatible';
 import { Modal } from 'antd';
 
 function showConfirm() {
@@ -48,6 +49,14 @@ function warning() {
   Modal.warning({
     title: 'This is a warning message',
     icon: <QuestionOutlined />,
+    content: 'some messages...some messages...',
+  });
+}
+
+function warningWithProps(props) {
+  Modal.warning({
+    title: 'This is a warning message',
+    icon: <LegacyIcon type={props.icon} />,
     content: 'some messages...some messages...',
   });
 }

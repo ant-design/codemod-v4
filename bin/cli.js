@@ -17,6 +17,8 @@ const transformersDir = path.join(__dirname, '../transforms');
 const babylonConfig = path.join(__dirname, './babylon.config.json');
 
 const transformers = [
+  // TODO: 考虑大多数项目并没有直接使用新版本的 `@antd-design/icons`
+  // 该项 codemod script 考虑动态加载
   'v4-Icon-Outlined',
   'v3-Icon-to-v4-Icon',
   'v3-Modal-method-with-icon-to-v4',

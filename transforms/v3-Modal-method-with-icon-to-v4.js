@@ -114,17 +114,10 @@ module.exports = (file, api, options) => {
                 );
                 iconProperty.value = jsxElement;
                 return;
-              } else {
-                // FIXME: use parent jsxElement
-                const location = nodePath.node.loc.start;
-                const message =
-                  'Contains an invalid icon, please check it at https://ant.design/components/icon';
-                summary.appendLine(
-                  `${file.path} - ${location.line}:${location.column}`,
-                  j(nodePath).toSource(),
-                  message,
-                );
               }
+              // FIXME: use parent jsxElement
+              const location = nodePath.node.loc.start;
+              addIconRelatedMsg(file, location, j(nodePath).toSource());
             }
 
             const jsxElement = importLegacyIcon(j, iconProperty, antdPkgName);

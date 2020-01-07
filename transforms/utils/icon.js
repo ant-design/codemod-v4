@@ -21,6 +21,7 @@ function getV4IconComponentName(type, theme) {
       theme ? `with ${theme}` : ''
     } cannot found, please check it at https://ant.design/components/icon`,
   );
+  return '';
 }
 
 function createIconJSXElement(j, iconLocalName, attrs = []) {

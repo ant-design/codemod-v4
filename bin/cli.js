@@ -5,6 +5,7 @@ const chalk = require('chalk');
 const execa = require('execa');
 const globby = require('globby');
 const updateCheck = require('update-check');
+const os = require('os');
 
 const jscodeshiftBin = require.resolve('.bin/jscodeshift');
 const pkg = require('../package.json');
@@ -15,6 +16,7 @@ const transformersDir = path.join(__dirname, '../transforms');
 // override default babylon parser config to enable `decorator-legacy`
 // https://github.com/facebook/jscodeshift/blob/master/parser/babylon.js
 const babylonConfig = path.join(__dirname, './babylon.config.json');
+const ignoreConfig = path.join(__dirname, './codemod.ignore');
 
 const transformers = [
   // TODO: 考虑大多数项目并没有直接使用新版本的 `@antd-design/icons`
@@ -68,7 +70,7 @@ function getRunnerArgs(
   const args = ['--verbose=2', '--ignore-pattern=**/node_modules/**'];
 
   // limit usage for cpus
-  const cpus = Math.max(2, Math.ceil(require('os').cpus().length / 3));
+  const cpus = Math.max(2, Math.ceil(os.cpus().length / 3));
   args.push('--cpus', cpus);
 
   args.push('--parser', parser);
@@ -81,6 +83,8 @@ function getRunnerArgs(
   }
 
   args.push('--transform', transformerPath);
+
+  args.push('--ignore-config', ignoreConfig);
 
   if (styleOption) {
     args.push('--importStyles');
@@ -99,27 +103,31 @@ async function run(filePath, args) {
   const jsPaths = paths.filter(path => /.jsx?$/.test(path));
   const tsPaths = paths.filter(path => /.tsx?$/.test(path));
 
+  // eslint-disable-next-line no-restricted-syntax
   for (const transformer of transformers) {
     if (jsPaths.length) {
       console.log(
         chalk.bgYellow.bold('JS/JSX files to convert'),
         jsPaths.length,
       );
-      await transform(transformer, 'babylon', jsPaths, injectStyle);
+      // eslint-disable-next-line no-await-in-loop
+      await transform(transformer, 'babylon', filePath, injectStyle);
     }
 
     if (tsPaths.length) {
-      console.log(chalk.bgBlue.bold('TS/TSX files to convert'), jsPaths.length);
-      await transform(transformer, 'tsx', tsPaths, injectStyle);
+      console.log(chalk.bgBlue.bold('TS/TSX files to convert'), tsPaths.length);
+      // eslint-disable-next-line no-await-in-loop
+      await transform(transformer, 'tsx', filePath, injectStyle);
     }
   }
 }
 
-async function transform(transformer, parser, paths, styleOption) {
+async function transform(transformer, parser, globPath, styleOption) {
   console.log(chalk.bgGreen.bold('Transform'), transformer);
   const transformerPath = path.join(transformersDir, `${transformer}.js`);
-  const args = getRunnerArgs(transformerPath, parser, styleOption).concat(
-    paths,
+
+  const args = [globPath].concat(
+    getRunnerArgs(transformerPath, parser, styleOption),
   );
   try {
     if (process.env.NODE_ENV === 'local') {
@@ -131,6 +139,11 @@ async function transform(transformer, parser, paths, styleOption) {
     });
   } catch (err) {
     console.error(err);
+    if (process.env.NODE_ENV === 'local') {
+      const errorLogFile = path.join(__dirname, './error.log');
+      fs.appendFileSync(errorLogFile, err);
+      fs.appendFileSync(errorLogFile, '\n');
+    }
   }
 }
 

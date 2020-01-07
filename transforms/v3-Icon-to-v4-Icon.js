@@ -1,4 +1,4 @@
-const summary = require('./utils/summary');
+const { addIconRelatedMsg } = require('./utils/summary');
 const { printOptions } = require('./utils/config');
 const { getV4IconComponentName } = require('./utils/icon');
 const {
@@ -72,7 +72,7 @@ module.exports = (file, api, options) => {
     // add @ant-design/icons imports
     addModuleDefaultImport(j, root, {
       moduleName: '@ant-design/icons',
-      localName: localName,
+      localName,
       before,
     });
     return true;
@@ -106,13 +106,7 @@ module.exports = (file, api, options) => {
 
     if (!v4IconComponentName) {
       const location = jsxElement.loc.start;
-      const message =
-        'Contains an invalid icon, please check it at https://ant.design/components/icon';
-      summary.appendLine(
-        `${file.path} - ${location.line}:${location.column}`,
-        j(jsxElement).toSource(),
-        message,
-      );
+      addIconRelatedMsg(file, location, j(jsxElement).toSource());
       return false;
     }
 

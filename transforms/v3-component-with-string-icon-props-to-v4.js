@@ -40,16 +40,15 @@ module.exports = (file, api, options) => {
               name: 'icon',
             },
           })
-          .filter(nodePath => {
-            return (
+          .filter(
+            nodePath =>
               nodePath.node.type === 'StringLiteral' ||
-              nodePath.node.type !== 'JSXExpressionContainer'
-            );
-          })
-          .forEach(path => {
+              nodePath.node.type !== 'JSXExpressionContainer',
+          )
+          .forEach(nodePath => {
             hasChanged = true;
 
-            const iconProperty = path.value;
+            const iconProperty = nodePath.value;
 
             // v3-Icon-to-v4-Icon should handle with JSXElement
             if (
@@ -77,11 +76,9 @@ module.exports = (file, api, options) => {
                   before: antdPkgName,
                 });
                 return;
-              } else {
-                const location = path.node.loc.start;
-
-                addIconRelatedMsg(file, location, j(nodePath).toSource());
               }
+              const location = nodePath.node.loc.start;
+              addIconRelatedMsg(file, location, j(nodePath).toSource());
             }
 
             // handle it with `@ant-design/compatible`

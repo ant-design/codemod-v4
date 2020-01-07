@@ -148,15 +148,28 @@ async function transform(transformer, parser, globPath, styleOption) {
 }
 
 async function bootstrap() {
+  const dir = process.argv[2];
+  // eslint-disable-next-line global-require
+  const args = require('yargs-parser')(process.argv.slice(3));
   if (process.env.NODE_ENV !== 'local') {
     // check for updates
     await checkUpdates();
     // check for git status
-    await ensureGitClean();
+    if (!args.force) {
+      await ensureGitClean();
+    } else {
+      console.log(
+        Array(3)
+          .fill(1)
+          .map(() =>
+            chalk.yellow(
+              'WARNING: You are trying to skip git status checking, please be careful',
+            ),
+          )
+          .join('\n'),
+      );
+    }
   }
-
-  const dir = process.argv[2];
-  const args = require('yargs-parser')(process.argv.slice(3));
 
   // check for `path`
   if (!dir || !fs.existsSync(dir)) {

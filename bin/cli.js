@@ -97,7 +97,8 @@ function getRunnerArgs(
 }
 
 async function run(filePath, args = {}) {
-  let paths = await globby([filePath]);
+  // ignore files from gitignore and node_modules
+  let paths = await globby([filePath, '!node_modules'], { gitignore: true });
   // filter for `.js(x) | .ts(x)`
   paths = paths.filter(n => /.(j|t)sx?$/.test(n));
 

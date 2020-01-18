@@ -5,6 +5,7 @@ const {
   removeEmptyModuleImport,
   parseStrToArray,
 } = require('./utils');
+const { markDependency } = require('./utils/marker');
 
 const deprecatedComponentNames = ['Form', 'Mention'];
 
@@ -53,6 +54,8 @@ module.exports = (file, api, options) => {
           moduleName: '@ant-design/compatible/assets/index.css',
           after: '@ant-design/compatible',
         });
+
+        markDependency('@ant-design/compatible');
       });
 
     return hasChanged;

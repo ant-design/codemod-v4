@@ -1,15 +1,17 @@
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
+
 const isGitClean = require('is-git-clean');
 const chalk = require('chalk');
 const execa = require('execa');
 const globby = require('globby');
 const updateCheck = require('update-check');
-const os = require('os');
 
 const jscodeshiftBin = require.resolve('.bin/jscodeshift');
 const pkg = require('../package.json');
 const summary = require('../transforms/utils/summary');
+const marker = require('../transforms/utils/marker');
 
 const transformersDir = path.join(__dirname, '../transforms');
 
@@ -147,6 +149,20 @@ async function transform(transformer, parser, globPath, styleOption) {
   }
 }
 
+function dependenciesAlert(needIcon, needCompatible) {
+  console.log(chalk.yellow('Please install the following dependencies:\n'));
+  const dependencies = ['antd^4.0.0-rc.0'];
+  if (needIcon) {
+    dependencies.push('@ant-design/icons^4.0.0-rc.0');
+  }
+
+  if (needCompatible) {
+    dependencies.push('@ant-design/compatible^1.0.0-rc.0');
+  }
+
+  console.log(dependencies.map(n => `* ${n}`).join('\n'));
+}
+
 async function bootstrap() {
   const dir = process.argv[2];
   // eslint-disable-next-line global-require
@@ -176,8 +192,10 @@ async function bootstrap() {
     console.log(chalk.yellow('Invalid dir:', dir, ', please pass a valid dir'));
     process.exit(1);
   }
-  summary.start();
+  await summary.start();
+  await marker.start();
   await run(dir, args);
+
   try {
     const output = await summary.output();
     if (Array.isArray(output) && output.length) {
@@ -191,11 +209,17 @@ async function bootstrap() {
           console.log(message);
           console.log('\n');
         });
-
-      console.log(
-        '\n----------- Thanks for using @ant-design/codemod -----------',
-      );
     }
+
+    console.log('----------- antd4 dependencies alert -----------\n');
+    const dependenciesMarkers = await marker.output();
+    const needIcon = dependenciesMarkers['@ant-design/icons'];
+    const needCompatible = dependenciesMarkers['@ant-design/compatible'];
+    dependenciesAlert(needIcon, needCompatible);
+
+    console.log(
+      '\n----------- Thanks for using @ant-design/codemod -----------',
+    );
   } catch (err) {
     console.log('skip summary due to', err);
   }

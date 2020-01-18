@@ -1,6 +1,7 @@
 const allIcons = require('@ant-design/icons/lib/icons');
 
 const { printOptions } = require('./utils/config');
+const { markDependency } = require('./utils/marker');
 const { removeEmptyModuleImport, addSubmoduleImport } = require('./utils');
 
 const outlinedIcons = Object.keys(allIcons)
@@ -35,13 +36,14 @@ module.exports = (file, api, options) => {
             specifier.imported.name !== importComponentName,
         );
 
-        const outlinedIconName = importComponentName + 'Outlined';
+        const outlinedIconName = `${importComponentName}Outlined`;
 
         if (localComponentName === importComponentName) {
           addSubmoduleImport(j, root, {
             moduleName: '@ant-design/icons',
             importedName: outlinedIconName,
           });
+          markDependency('@ant-design/icons');
           if (localComponentName === importComponentName) {
             root
               .findJSXElements(localComponentName)
@@ -58,6 +60,7 @@ module.exports = (file, api, options) => {
             importedName: outlinedIconName,
             localName: localComponentName,
           });
+          markDependency('@ant-design/icons');
         }
       });
 

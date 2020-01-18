@@ -5,6 +5,7 @@ const {
 } = require('./utils');
 const { printOptions } = require('./utils/config');
 const { addIconRelatedMsg } = require('./utils/summary');
+const { markDependency } = require('./utils/marker');
 const {
   getV4IconComponentName,
   createIconJSXElement,
@@ -25,6 +26,7 @@ module.exports = (file, api, options) => {
       importedName: iconName,
       before,
     });
+    markDependency('@ant-design/icons');
 
     return iconJSXElement;
   }
@@ -44,6 +46,7 @@ module.exports = (file, api, options) => {
       localName: 'LegacyIcon',
       before,
     });
+    markDependency('@ant-design/compatible');
 
     return iconJSXElement;
   }

@@ -1,4 +1,5 @@
 const { addIconRelatedMsg } = require('./utils/summary');
+const { markDependency } = require('./utils/marker');
 const { printOptions } = require('./utils/config');
 const { getV4IconComponentName } = require('./utils/icon');
 const {
@@ -91,6 +92,7 @@ module.exports = (file, api, options) => {
       localName: 'LegacyIcon',
       before,
     });
+    markDependency('@ant-design/compatible');
   }
 
   function rewriteToSepcificV4Icon(j, root, { jsxElement, before }) {
@@ -125,6 +127,7 @@ module.exports = (file, api, options) => {
       importedName: v4IconComponentName,
       before,
     });
+    markDependency('@ant-design/icons');
     return true;
   }
 
@@ -223,6 +226,7 @@ module.exports = (file, api, options) => {
         importedName: staticMethod,
         before,
       });
+      markDependency('@ant-design/icons');
     });
 
     staticMethodCallExpressions.forEach(nodePath => {

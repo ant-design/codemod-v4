@@ -1,10 +1,11 @@
-const allIcons = require('@ant-design/icons/lib/icons');
-
 const { printOptions } = require('./utils/config');
 const { markDependency } = require('./utils/marker');
+const { getAllV4IconNames } = require('./utils/icon');
 const { removeEmptyModuleImport, addSubmoduleImport } = require('./utils');
 
-const outlinedIcons = Object.keys(allIcons)
+const allV4Icons = getAllV4IconNames();
+
+const outlinedIcons = allV4Icons
   .filter(n => n.endsWith('Outlined'))
   .map(n => n.replace(/Outlined$/, ''));
 

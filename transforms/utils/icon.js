@@ -1,9 +1,25 @@
+const path = require('path');
+const globby = require('globby');
 const {
   withThemeSuffix,
   removeTypeTheme,
   alias,
 } = require('@ant-design/compatible/lib/icon/utils');
-const allIcons = require('@ant-design/icons/lib/icons');
+
+const v4IconModulePath = path.dirname(
+  require.resolve('@ant-design/icons/lib/icons'),
+);
+
+let allV4Icons = [];
+function getAllV4IconNames() {
+  if (allV4Icons.length) {
+    return allV4Icons;
+  }
+  // read allIcons by fs
+  const iconPaths = globby.sync([`${v4IconModulePath}/*.js`]);
+  allV4Icons = iconPaths.map(iconPath => path.basename(iconPath, '.js'));
+  return allV4Icons;
+}
 
 function getV4IconComponentName(type, theme) {
   const v4IconComponentName = withThemeSuffix(
@@ -11,8 +27,10 @@ function getV4IconComponentName(type, theme) {
     theme || 'outlined',
   );
 
+  const v4Icons = getAllV4IconNames();
+
   // check if component is valid or not in v4 icons
-  if (allIcons[v4IconComponentName]) {
+  if (v4Icons.includes(v4IconComponentName)) {
     return v4IconComponentName;
   }
 
@@ -34,6 +52,7 @@ function createIconJSXElement(j, iconLocalName, attrs = []) {
 }
 
 module.exports = {
+  getAllV4IconNames,
   getV4IconComponentName,
   createIconJSXElement,
 };

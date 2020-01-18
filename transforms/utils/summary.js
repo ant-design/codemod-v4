@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { promisify } = require('util');
 const papaparse = require('papaparse');
 
 const encoding = 'utf8';
@@ -12,23 +13,31 @@ const summaryFilePath = path.join(
 const newline = '\r\n';
 const delimiter = ',,,';
 
-function start() {
-  fs.openSync(summaryFilePath, 'w');
+const fsOpenAsync = promisify(fs.open);
+const fsUnlinkAsync = promisify(fs.unlink);
+const fsAppendFileAsync = promisify(fs.appendFile);
+
+async function start() {
+  return await fsOpenAsync(summaryFilePath, 'w');
 }
 
-function appendLine(fileName, source, message) {
+async function appendLine(fileName, source, message) {
   const lineContent = [fileName, source, message].join(delimiter) + newline;
-  fs.appendFile(summaryFilePath, lineContent, encoding, Function.prototype);
+  return await fsAppendFileAsync(
+    summaryFilePath,
+    lineContent,
+    encoding,
+    Function.prototype,
+  );
 }
 
 async function output() {
-  return new Promise((resolve, reject) => {
+  const result = await new Promise((resolve, reject) => {
     const stream = fs.createReadStream(summaryFilePath);
     papaparse.parse(stream, {
       delimiter,
       newline,
       complete: ({ data, errors }) => {
-        cleanup();
         if (errors.length) {
           reject(errors.message);
         }
@@ -37,14 +46,16 @@ async function output() {
       },
     });
   });
+  await cleanup();
+  return result;
 }
 
-function cleanup() {
-  fs.unlinkSync(summaryFilePath);
+async function cleanup() {
+  return await fsUnlinkAsync(summaryFilePath);
 }
 
-function addIconRelatedMsg(file, location, source) {
-  return appendLine(
+async function addIconRelatedMsg(file, location, source) {
+  return await appendLine(
     `${file.path} - ${location.line}:${location.column}`,
     source,
     'Contains an invalid icon, please check it at https://ant.design/components/icon',

@@ -227,7 +227,7 @@ async function bootstrap() {
     dependenciesAlert(needIcon, needCompatible);
 
     console.log(
-      '\n----------- Thanks for using @ant-design/codemod -----------',
+      `\n----------- Thanks for using @ant-design/codemod ${pkg.version} -----------`,
     );
   } catch (err) {
     console.log('skip summary due to', err);

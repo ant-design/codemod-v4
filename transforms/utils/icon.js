@@ -36,7 +36,7 @@ function getV4IconComponentName(type, theme) {
 
   console.warn(
     `The icon name '${type}'${
-      theme ? `with ${theme}` : ''
+      theme ? ` with ${theme}` : ''
     } cannot found, please check it at https://ant.design/components/icon`,
   );
   return '';

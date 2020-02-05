@@ -77,12 +77,8 @@ function getRunnerArgs(
 
   args.push('--parser', parser);
 
-  if (parser === 'tsx') {
-    args.push('--extensions=tsx,ts,jsx,js');
-  } else {
-    args.push('--parser-config', babylonConfig);
-    args.push('--extensions=jsx,js');
-  }
+  args.push('--parser-config', babylonConfig);
+  args.push('--extensions=tsx,ts,jsx,js');
 
   args.push('--transform', transformerPath);
 
@@ -109,20 +105,11 @@ async function run(filePath, args = {}) {
 
   // eslint-disable-next-line no-restricted-syntax
   for (const transformer of transformers.concat(extraScripts)) {
-    if (jsPaths.length) {
-      console.log(
-        chalk.bgYellow.bold('JS/JSX files to convert'),
-        jsPaths.length,
-      );
-      // eslint-disable-next-line no-await-in-loop
-      await transform(transformer, 'babylon', filePath, args);
-    }
+    console.log(chalk.bgYellow.bold('JS/JSX files to convert'), jsPaths.length);
+    console.log(chalk.bgBlue.bold('TS/TSX files to convert'), tsPaths.length);
 
-    if (tsPaths.length) {
-      console.log(chalk.bgBlue.bold('TS/TSX files to convert'), tsPaths.length);
-      // eslint-disable-next-line no-await-in-loop
-      await transform(transformer, 'tsx', filePath, args);
-    }
+    // eslint-disable-next-line no-await-in-loop
+    await transform(transformer, 'babylon', filePath, args);
   }
 }
 

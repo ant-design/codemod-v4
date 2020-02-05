@@ -5,13 +5,6 @@
   "startLine": 1,
   "tokens": true,
   "plugins": [
-    [
-      "flow",
-      {
-        "all": true
-      }
-    ],
-    "flowComments",
     "jsx",
     "asyncGenerators",
     "bigInt",
@@ -27,6 +20,7 @@
     "doExpressions",
     "dynamicImport",
     "exportDefaultFrom",
+    "exportExtensions",
     "exportNamespaceFrom",
     "functionBind",
     "functionSent",
@@ -43,6 +37,7 @@
         "proposal": "minimal"
       }
     ],
-    "throwExpressions"
+    "throwExpressions",
+    "typescript"
   ]
 }

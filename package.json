@@ -37,8 +37,6 @@
     "test": "jest"
   },
   "dependencies": {
-    "@ant-design/compatible": "^0.0.1-rc.1",
-    "@ant-design/icons": "^4.0.0-rc.0",
     "@babel/runtime": "^7.8.3",
     "chalk": "^3.0.0",
     "execa": "^3.4.0",
@@ -51,6 +49,8 @@
     "yargs-parser": "^16.1.0"
   },
   "devDependencies": {
+    "@ant-design/compatible": "^0.0.1-rc.1",
+    "@ant-design/icons": "^4.0.0-rc.0",
     "@umijs/fabric": "^1.1.10",
     "coveralls": "^3.0.6",
     "cross-env": "^6.0.0",

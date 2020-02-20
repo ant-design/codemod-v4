@@ -43,8 +43,7 @@
     "globby": "^10.0.1",
     "is-git-clean": "^1.1.0",
     "jscodeshift": "^0.6.4",
-    "lodash.camelcase": "^4.3.0",
-    "lodash.upperfirst": "^4.3.1",
+    "lodash": "^4.17.15",
     "papaparse": "^5.1.0",
     "update-check": "^1.5.3",
     "yargs-parser": "^16.1.0"

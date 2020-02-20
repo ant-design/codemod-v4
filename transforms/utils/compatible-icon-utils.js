@@ -1,5 +1,4 @@
-const camelCase = require('lodash.camelcase');
-const upperFirst = require('lodash.upperfirst');
+const { camelCase, upperFirst } = require('lodash');
 
 // copied from https://github.com/ant-design/compatible/blob/master/src/icon/utils.ts
 // "translate" these code to commonjs to avoid `babel` and `regenerator-runtime`

@@ -146,7 +146,7 @@ function dependenciesAlert(needIcon, needCompatible) {
   }
 
   if (needCompatible) {
-    dependencies.push('@ant-design/compatible^1.0.0-rc.0');
+    dependencies.push('@ant-design/compatible^0.0.1-rc.0');
   }
 
   console.log(dependencies.map(n => `* ${n}`).join('\n'));

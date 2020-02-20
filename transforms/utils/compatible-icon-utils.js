@@ -19,11 +19,7 @@ function withThemeSuffix(type, theme) {
   const realTheme = upperFirst(themeMap[theme]);
 
   if (theme !== 'outlined' && !realTheme) {
-    console.warn(
-      false,
-      'Icon',
-      `This icon '${type}' has unknown theme '${theme}'`,
-    );
+    console.warn(`This icon '${type}' has unknown theme '${theme}'`);
   }
 
   return result + realTheme;
@@ -58,8 +54,6 @@ function alias(type) {
     default:
   }
   console.warn(
-    newType === type,
-    'Icon',
     `Icon '${type}' was a typo and is now deprecated, please use '${newType}' instead.`,
   );
   return newType;

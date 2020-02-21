@@ -4,7 +4,7 @@ const {
   withThemeSuffix,
   removeTypeTheme,
   alias,
-} = require('@ant-design/compatible/lib/icon/utils');
+} = require('./compatible-icon-utils');
 
 const v4IconModulePath = path.dirname(
   require.resolve('@ant-design/icons/lib/icons'),

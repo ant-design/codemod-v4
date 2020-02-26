@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`v3-typings-to-compatible alias import from es 1`] = `"import { FormComponentProps as AAFormProps } from '@ant-design/compatible/es/form';"`;
+
+exports[`v3-typings-to-compatible alias import from lib 1`] = `"import { FormComponentProps as AAFormProps } from '@ant-design/compatible/lib/form';"`;
+
+exports[`v3-typings-to-compatible basic es import 1`] = `"import { FormComponentProps } from '@ant-design/compatible/es/form';"`;
+
+exports[`v3-typings-to-compatible basic lib import 1`] = `"import { FormComponentProps } from '@ant-design/compatible/lib/form';"`;

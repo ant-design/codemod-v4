@@ -1,6 +1,6 @@
 {
   "name": "@ant-design/codemod-v4",
-  "version": "1.0.0-alpha.17",
+  "version": "1.0.0-alpha.18",
   "description": "Codemod for ant design v4 upgrade",
   "bin": {
     "antd4-codemod": "./bin/antd-codemod.js"

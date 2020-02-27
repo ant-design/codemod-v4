@@ -29,6 +29,7 @@ const transformers = [
   'v3-component-with-string-icon-props-to-v4',
   'v3-Component-to-compatible',
   'v3-LocaleProvider-to-v4-ConfigProvider',
+  'v3-typings-to-compatible',
 ];
 
 async function ensureGitClean() {

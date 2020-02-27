@@ -39,4 +39,18 @@ describe(testUnit, () => {
     `import { FormComponentProps as AAFormProps } from 'antd/lib/form';`,
     'alias import from lib',
   );
+
+  defineSnapshotTest(
+    transform,
+    {},
+    `import { FormComponentProps, FormItemProps } from 'antd/lib/form';`,
+    'basic import: multi',
+  );
+
+  defineSnapshotTest(
+    transform,
+    {},
+    `import { FormComponentProps as AAFormProps, FormItemProps as AAFormItemProps } from 'antd/lib/form';`,
+    'alias import: multi',
+  );
 });

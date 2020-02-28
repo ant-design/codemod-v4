@@ -1,23 +1,33 @@
+/* eslint no-console: 0 */
+
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
 
-const isGitClean = require('is-git-clean');
+const _ = require('lodash');
 const chalk = require('chalk');
 const execa = require('execa');
 const globby = require('globby');
+const isGitClean = require('is-git-clean');
 const updateCheck = require('update-check');
+const readPkgUp = require('read-pkg-up');
+const semverSatisfies = require('semver/functions/satisfies');
 
 const jscodeshiftBin = require.resolve('.bin/jscodeshift');
-const pkg = require('../package.json');
+
 const summary = require('../transforms/utils/summary');
 const marker = require('../transforms/utils/marker');
+const pkg = require('../package.json');
+const upgradeList = require('./upgrade-list');
 
+// jscodeshift codemod scripts dir
 const transformersDir = path.join(__dirname, '../transforms');
 
 // override default babylon parser config to enable `decorator-legacy`
 // https://github.com/facebook/jscodeshift/blob/master/parser/babylon.js
 const babylonConfig = path.join(__dirname, './babylon.config.json');
+
+// jscodeshift bin#--ignore-config
 const ignoreConfig = path.join(__dirname, './codemod.ignore');
 
 const transformers = [
@@ -30,6 +40,14 @@ const transformers = [
   'v3-Component-to-compatible',
   'v3-LocaleProvider-to-v4-ConfigProvider',
   'v3-typings-to-compatible',
+];
+
+const dependencyProperties = [
+  'dependencies',
+  'devDependencies',
+  'clientDependencies',
+  'isomorphicDependencies',
+  'buildDependencies',
 ];
 
 async function ensureGitClean() {
@@ -153,11 +171,47 @@ function dependenciesAlert(needIcon, needCompatible) {
   console.log(dependencies.map(n => `* ${n}`).join('\n'));
 }
 
+async function upgradeDetect(targetDir) {
+  const result = [];
+  const cwd = path.join(process.cwd(), targetDir);
+  const closetPkgJson = await readPkgUp({ cwd });
+  if (!closetPkgJson) {
+    console.log(
+      chalk.yellow("Skipping because we didn't find package.json file"),
+    );
+    return;
+  }
+  const { packageJson, path: pkgJsonPath } = closetPkgJson;
+  Object.keys(upgradeList).forEach(depName => {
+    dependencyProperties.forEach(property => {
+      const expectVersion = upgradeList[depName].version;
+      const versionRange = _.get(packageJson, `${property}.${depName}`);
+      if (versionRange && !semverSatisfies(expectVersion, versionRange)) {
+        result.push([depName, expectVersion, property]);
+      }
+    });
+  });
+
+  if (!result.length) {
+    console.log(chalk.green('Checking passed'));
+    return;
+  }
+
+  console.log(chalk.yellow('Please upgrade these dependencies:\n'));
+  console.log(`> package.json file:  ${pkgJsonPath} \n`);
+  const dependencies = result.map(
+    ([depName, expectVersion, dependencyProperty]) =>
+      `${depName}^${expectVersion} as ${dependencyProperty}`,
+  );
+
+  console.log(dependencies.map(n => `* ${n}`).join('\n'));
+}
+
 /**
  * options
  * --force   // force skip git checking (dangerously)
  * --cpus=1  // specify cpus cores to use
- * --extraScripts=v4-Icon-Outlined,blabla // add extra codemod scripts to run
+ * --extraScripts=v4-Icon-Outlined, blabla // add extra codemod scripts to run
  */
 
 async function bootstrap() {
@@ -191,7 +245,7 @@ async function bootstrap() {
   }
   await summary.start();
   await marker.start();
-  await run(dir, args);
+  // await run(dir, args);
 
   try {
     const output = await summary.output();
@@ -213,6 +267,9 @@ async function bootstrap() {
     const needIcon = dependenciesMarkers['@ant-design/icons'];
     const needCompatible = dependenciesMarkers['@ant-design/compatible'];
     dependenciesAlert(needIcon, needCompatible);
+
+    console.log('\n----------- additional dependencies alert -----------\n');
+    await upgradeDetect(dir);
 
     console.log(
       `\n----------- Thanks for using @ant-design/codemod ${pkg.version} -----------`,

@@ -10,5 +10,6 @@ module.exports = {
     'react/sort-comp': 0,
     '@typescript-eslint/no-explicit-any': 0,
     'no-return-await': 0,
+    'consistent-return': 0,
   },
 };

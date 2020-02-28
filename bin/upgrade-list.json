@@ -1,0 +1,8 @@
+{
+  "@ant-design/pro-layout": {
+    "version": "5.0.0"
+  },
+  "@ant-design/icons": {
+    "version": "4.0.0"
+  }
+}

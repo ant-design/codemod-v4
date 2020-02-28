@@ -245,7 +245,7 @@ async function bootstrap() {
   }
   await summary.start();
   await marker.start();
-  // await run(dir, args);
+  await run(dir, args);
 
   try {
     const output = await summary.output();

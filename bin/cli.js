@@ -197,7 +197,11 @@ async function upgradeDetect(targetDir) {
     return;
   }
 
-  console.log(chalk.yellow('Please upgrade these dependencies:\n'));
+  console.log(
+    chalk.yellow(
+      "It's recommended to upgrade these dependencies to ensure working well with antd4\n",
+    ),
+  );
   console.log(`> package.json file:  ${pkgJsonPath} \n`);
   const dependencies = result.map(
     ([depName, expectVersion, dependencyProperty]) =>

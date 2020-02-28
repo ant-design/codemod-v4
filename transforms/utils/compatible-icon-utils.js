@@ -53,9 +53,12 @@ function alias(type) {
       break;
     default:
   }
-  console.warn(
-    `Icon '${type}' was a typo and is now deprecated, please use '${newType}' instead.`,
-  );
+
+  if (type !== newType) {
+    console.warn(
+      `Icon '${type}' was a typo and is now deprecated, please use '${newType}' instead.`,
+    );
+  }
   return newType;
 }
 

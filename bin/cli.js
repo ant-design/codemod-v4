@@ -201,7 +201,7 @@ async function upgradeDetect(targetDir) {
   console.log(`> package.json file:  ${pkgJsonPath} \n`);
   const dependencies = result.map(
     ([depName, expectVersion, dependencyProperty]) =>
-      `${depName}^${expectVersion} as ${dependencyProperty}`,
+      `${depName}^${expectVersion} in ${dependencyProperty}`,
   );
 
   console.log(dependencies.map(n => `* ${n}`).join('\n'));

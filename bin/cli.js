@@ -18,7 +18,7 @@ const jscodeshiftBin = require.resolve('.bin/jscodeshift');
 const summary = require('../transforms/utils/summary');
 const marker = require('../transforms/utils/marker');
 const pkg = require('../package.json');
-const upgradeList = require('./upgrade-list');
+const pkgUpgradeList = require('./upgrade-list');
 
 // jscodeshift codemod scripts dir
 const transformersDir = path.join(__dirname, '../transforms');
@@ -157,40 +157,78 @@ async function transform(transformer, parser, globPath, options) {
   }
 }
 
-function dependenciesAlert(needIcon, needCompatible) {
-  console.log(chalk.yellow('Please install the following dependencies:\n'));
-  const dependencies = ['antd^4.0.0-rc.0'];
-  if (needIcon) {
-    dependencies.push('@ant-design/icons^4.0.0-rc.0');
-  }
-
-  if (needCompatible) {
-    dependencies.push('@ant-design/compatible^0.0.1-rc.0');
-  }
-
-  console.log(dependencies.map(n => `* ${n}`).join('\n'));
-}
-
-async function upgradeDetect(targetDir) {
+async function upgradeDetect(targetDir, needIcon, needCompatible) {
   const result = [];
   const cwd = path.join(process.cwd(), targetDir);
   const closetPkgJson = await readPkgUp({ cwd });
+
+  let pkgJsonPath;
   if (!closetPkgJson) {
-    console.log(
-      chalk.yellow("Skipping because we didn't find package.json file"),
-    );
-    return;
-  }
-  const { packageJson, path: pkgJsonPath } = closetPkgJson;
-  Object.keys(upgradeList).forEach(depName => {
-    dependencyProperties.forEach(property => {
-      const expectVersion = upgradeList[depName].version;
-      const versionRange = _.get(packageJson, `${property}.${depName}`);
-      if (versionRange && !semverSatisfies(expectVersion, versionRange)) {
-        result.push([depName, expectVersion, property]);
+    pkgJsonPath = "we didn't find your package.json";
+    // unknown dependency property
+    result.push(['antd', pkgUpgradeList.antd]);
+    if (needIcon) {
+      result.push(['@ant-design/icons', pkgUpgradeList['@ant-design/icons']]);
+    }
+
+    if (needCompatible) {
+      result.push([
+        '@ant-design/compatible',
+        pkgUpgradeList['@ant-design/compatible'],
+      ]);
+    }
+  } else {
+    const { packageJson } = closetPkgJson;
+    pkgJsonPath = closetPkgJson.path;
+
+    // dependencies must be installed or upgraded with correct version
+    const mustInstallOrUpgradeDeps = ['antd'];
+    if (needIcon) {
+      mustInstallOrUpgradeDeps.push('@ant-design/icons');
+    }
+    if (needCompatible) {
+      mustInstallOrUpgradeDeps.push('@ant-design/compatible');
+    }
+
+    // handle mustInstallOrUpgradeDeps
+    mustInstallOrUpgradeDeps.forEach(depName => {
+      let hasDependency = false;
+      dependencyProperties.forEach(property => {
+        const expectVersion = pkgUpgradeList[depName].version;
+        const versionRange = _.get(packageJson, `${property}.${depName}`);
+        // mark dependency installment state
+        hasDependency = hasDependency || !!versionRange;
+        // no dependency or improper version dependency
+        if (!!versionRange && !semverSatisfies(expectVersion, versionRange)) {
+          result.push([depName, expectVersion, property]);
+        }
+      });
+      if (!hasDependency) {
+        // unknown dependency property
+        result.push([depName, pkgUpgradeList[depName].version]);
       }
     });
-  });
+
+    // dependencies must be upgraded to correct version
+    const mustUpgradeDeps = _.without(
+      Object.keys(pkgUpgradeList),
+      ...mustInstallOrUpgradeDeps,
+    );
+    mustUpgradeDeps.forEach(depName => {
+      dependencyProperties.forEach(property => {
+        const expectVersion = pkgUpgradeList[depName].version;
+        const versionRange = _.get(packageJson, `${property}.${depName}`);
+        /**
+         * we may have dependencies in `package.json`
+         * make sure that they can `work well` with `antd4`
+         * so we check dependency's version here
+         */
+        if (!!versionRange && !semverSatisfies(expectVersion, versionRange)) {
+          result.push([depName, expectVersion, property]);
+        }
+      });
+    });
+  }
 
   if (!result.length) {
     console.log(chalk.green('Checking passed'));
@@ -199,13 +237,16 @@ async function upgradeDetect(targetDir) {
 
   console.log(
     chalk.yellow(
-      "It's recommended to upgrade these dependencies to ensure working well with antd4\n",
+      "It's recommended to install or upgrade these dependencies to ensure working well with antd4\n",
     ),
   );
   console.log(`> package.json file:  ${pkgJsonPath} \n`);
   const dependencies = result.map(
     ([depName, expectVersion, dependencyProperty]) =>
-      `${depName}^${expectVersion} in ${dependencyProperty}`,
+      [
+        `${depName}^${expectVersion}`,
+        dependencyProperty ? `in ${dependencyProperty}` : '',
+      ].join(' '),
   );
 
   console.log(dependencies.map(n => `* ${n}`).join('\n'));
@@ -270,10 +311,7 @@ async function bootstrap() {
     const dependenciesMarkers = await marker.output();
     const needIcon = dependenciesMarkers['@ant-design/icons'];
     const needCompatible = dependenciesMarkers['@ant-design/compatible'];
-    dependenciesAlert(needIcon, needCompatible);
-
-    console.log('\n----------- additional dependencies alert -----------\n');
-    await upgradeDetect(dir);
+    await upgradeDetect(dir, needIcon, needCompatible);
 
     console.log(
       `\n----------- Thanks for using @ant-design/codemod ${pkg.version} -----------`,

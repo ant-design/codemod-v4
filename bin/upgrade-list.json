@@ -1,8 +1,14 @@
 {
-  "@ant-design/pro-layout": {
-    "version": "5.0.0"
+  "antd": {
+    "version": "4.0.0"
   },
   "@ant-design/icons": {
     "version": "4.0.0"
+  },
+  "@ant-design/compatible": {
+    "version": "1.0.0"
+  },
+  "@ant-design/pro-layout": {
+    "version": "5.0.0"
   }
 }

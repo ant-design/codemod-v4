@@ -9,6 +9,12 @@ const deprecatedIdentityShape = [
     importSourceUpdater: source =>
       source.replace(/^antd\//, '@ant-design/compatible/'),
   },
+  {
+    identity: 'WrappedFormUtils',
+    rule: /^antd\/(es|lib)\/form/,
+    importSourceUpdater: source =>
+      source.replace(/^antd\//, '@ant-design/compatible/'),
+  },
 ];
 
 module.exports = (file, api, options) => {

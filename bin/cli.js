@@ -112,9 +112,11 @@ function getRunnerArgs(
 
 async function run(filePath, args = {}) {
   const extraScripts = args.extraScripts ? args.extraScripts.split(',') : [];
-
+  const usedTransformers = args.migrateform
+    ? ['v3-Form-to-FieldForm']
+    : transformers.concat(extraScripts);
   // eslint-disable-next-line no-restricted-syntax
-  for (const transformer of transformers.concat(extraScripts)) {
+  for (const transformer of usedTransformers) {
     // eslint-disable-next-line no-await-in-loop
     await transform(transformer, 'babylon', filePath, args);
   }

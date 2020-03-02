@@ -7,7 +7,6 @@ const os = require('os');
 const _ = require('lodash');
 const chalk = require('chalk');
 const execa = require('execa');
-const globby = require('globby');
 const isGitClean = require('is-git-clean');
 const updateCheck = require('update-check');
 const readPkgUp = require('read-pkg-up');
@@ -88,7 +87,7 @@ function getRunnerArgs(
   parser = 'babylon', // use babylon as default parser
   options = {},
 ) {
-  const args = ['--verbose=2', '--ignore-pattern=**/node_modules/**'];
+  const args = ['--verbose=2', '--ignore-pattern=**/node_modules'];
 
   // limit usage for cpus
   const cpus = options.cpus || Math.max(2, Math.ceil(os.cpus().length / 3));
@@ -112,21 +111,10 @@ function getRunnerArgs(
 }
 
 async function run(filePath, args = {}) {
-  // ignore files from gitignore and node_modules
-  let paths = await globby([filePath, '!node_modules'], { gitignore: true });
-  // filter for `.js(x) | .ts(x)`
-  paths = paths.filter(n => /.(j|t)sx?$/.test(n));
-
-  const jsPaths = paths.filter(n => /.jsx?$/.test(n));
-  const tsPaths = paths.filter(n => /.tsx?$/.test(n));
-
   const extraScripts = args.extraScripts ? args.extraScripts.split(',') : [];
 
   // eslint-disable-next-line no-restricted-syntax
   for (const transformer of transformers.concat(extraScripts)) {
-    console.log(chalk.bgYellow.bold('JS/JSX files to convert'), jsPaths.length);
-    console.log(chalk.bgBlue.bold('TS/TSX files to convert'), tsPaths.length);
-
     // eslint-disable-next-line no-await-in-loop
     await transform(transformer, 'babylon', filePath, args);
   }
@@ -166,13 +154,18 @@ async function upgradeDetect(targetDir, needIcon, needCompatible) {
   if (!closetPkgJson) {
     pkgJsonPath = "we didn't find your package.json";
     // unknown dependency property
-    result.push(['antd', pkgUpgradeList.antd]);
+    result.push(['install', 'antd', pkgUpgradeList.antd]);
     if (needIcon) {
-      result.push(['@ant-design/icons', pkgUpgradeList['@ant-design/icons']]);
+      result.push([
+        'install',
+        '@ant-design/icons',
+        pkgUpgradeList['@ant-design/icons'],
+      ]);
     }
 
     if (needCompatible) {
       result.push([
+        'install',
         '@ant-design/compatible',
         pkgUpgradeList['@ant-design/compatible'],
       ]);
@@ -200,12 +193,12 @@ async function upgradeDetect(targetDir, needIcon, needCompatible) {
         hasDependency = hasDependency || !!versionRange;
         // no dependency or improper version dependency
         if (!!versionRange && !semverSatisfies(expectVersion, versionRange)) {
-          result.push([depName, expectVersion, property]);
+          result.push(['update', depName, expectVersion, property]);
         }
       });
       if (!hasDependency) {
         // unknown dependency property
-        result.push([depName, pkgUpgradeList[depName].version]);
+        result.push(['install', depName, pkgUpgradeList[depName].version]);
       }
     });
 
@@ -224,7 +217,7 @@ async function upgradeDetect(targetDir, needIcon, needCompatible) {
          * so we check dependency's version here
          */
         if (!!versionRange && !semverSatisfies(expectVersion, versionRange)) {
-          result.push([depName, expectVersion, property]);
+          result.push(['update', depName, expectVersion, property]);
         }
       });
     });
@@ -242,8 +235,9 @@ async function upgradeDetect(targetDir, needIcon, needCompatible) {
   );
   console.log(`> package.json file:  ${pkgJsonPath} \n`);
   const dependencies = result.map(
-    ([depName, expectVersion, dependencyProperty]) =>
+    ([operateType, depName, expectVersion, dependencyProperty]) =>
       [
+        _.capitalize(operateType),
         `${depName}^${expectVersion}`,
         dependencyProperty ? `in ${dependencyProperty}` : '',
       ].join(' '),

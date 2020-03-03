@@ -3,6 +3,7 @@
   "allowImportExportEverywhere": true,
   "allowReturnOutsideFunction": true,
   "startLine": 1,
+  "compact": false,
   "tokens": true,
   "plugins": [
     "jsx",

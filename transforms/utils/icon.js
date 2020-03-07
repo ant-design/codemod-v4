@@ -1,5 +1,6 @@
 const path = require('path');
-const globby = require('globby');
+const fs = require('fs');
+
 const {
   withThemeSuffix,
   removeTypeTheme,
@@ -15,9 +16,16 @@ function getAllV4IconNames() {
   if (allV4Icons.length) {
     return allV4Icons;
   }
-  // read allIcons by fs
-  const iconPaths = globby.sync([`${v4IconModulePath}/*.js`]);
-  allV4Icons = iconPaths.map(iconPath => path.basename(iconPath, '.js'));
+
+  const files = fs.readdirSync(v4IconModulePath);
+  // read allIcons by fs exclude index.js
+  allV4Icons = files
+    .filter(
+      filePath =>
+        path.extname(filePath) === '.js' &&
+        path.basename(filePath, '.js') !== 'index',
+    )
+    .map(filePath => path.basename(filePath, '.js'));
   return allV4Icons;
 }
 

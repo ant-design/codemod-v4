@@ -30,5 +30,11 @@ describe('test for transforms/utils/icon', () => {
     expect(warnSpy).toHaveBeenCalledWith(
       `The icon name 'smile' with twotone cannot found, please check it at https://ant.design/components/icon`,
     );
+
+    expect(getV4IconComponentName('cross-circle-o')).toBe('');
+
+    expect(warnSpy).toHaveBeenCalledWith(
+      `The icon name 'cross-circle-o' cannot found, please check it at https://ant.design/components/icon`,
+    );
   });
 });

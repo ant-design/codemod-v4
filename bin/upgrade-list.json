@@ -16,5 +16,11 @@
   },
   "@alipay/tech-ui": {
     "version": "1.14.0"
+  },
+  "react": {
+    "version": "16.9.0"
+  },
+  "react-dom": {
+    "version": "16.9.0"
   }
 }

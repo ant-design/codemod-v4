@@ -171,7 +171,7 @@ async function upgradeDetect(targetDir, needIcon, needCompatible) {
       result.push([
         'install',
         '@ant-design/icons',
-        pkgUpgradeList['@ant-design/icons'],
+        pkgUpgradeList['@ant-design/icons'].version,
       ]);
     }
 
@@ -179,7 +179,7 @@ async function upgradeDetect(targetDir, needIcon, needCompatible) {
       result.push([
         'install',
         '@ant-design/compatible',
-        pkgUpgradeList['@ant-design/compatible'],
+        pkgUpgradeList['@ant-design/compatible'].version,
       ]);
     }
   } else {
@@ -198,8 +198,9 @@ async function upgradeDetect(targetDir, needIcon, needCompatible) {
     // handle mustInstallOrUpgradeDeps
     mustInstallOrUpgradeDeps.forEach(depName => {
       let hasDependency = false;
+      const expectVersion = pkgUpgradeList[depName].version;
+      // const upgradePkgDescription = pkgUpgradeList[depName].description;
       dependencyProperties.forEach(property => {
-        const expectVersion = pkgUpgradeList[depName].version;
         const versionRange = _.get(packageJson, `${property}.${depName}`);
         // mark dependency installment state
         hasDependency = hasDependency || !!versionRange;

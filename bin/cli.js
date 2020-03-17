@@ -103,6 +103,9 @@ function getRunnerArgs(
   if (parser === 'ts') {
     args.push('--parser-config', babylonTsOnlyConfig);
     args.push('--extensions=ts');
+  } else if (parser === 'flow') {
+    // flow-parse is different from babylon
+    args.push('--extensions=jsx,js');
   } else {
     args.push('--parser-config', babylonConfig);
     args.push('--extensions=tsx,jsx,js');
@@ -131,10 +134,16 @@ async function run(filePath, options = {}) {
 
   // eslint-disable-next-line no-restricted-syntax
   for (const transformer of transformers.concat(extraScripts)) {
-    // eslint-disable-next-line no-await-in-loop
-    await transform(transformer, 'babylon', filePath, options);
-    // eslint-disable-next-line no-await-in-loop
-    await transform(transformer, 'ts', filePath, options);
+    if (options.flow) {
+      // flow for `flow` parser is independent
+      // eslint-disable-next-line no-await-in-loop
+      await transform(transformer, 'flow', filePath, options);
+    } else {
+      // eslint-disable-next-line no-await-in-loop
+      await transform(transformer, 'babylon', filePath, options);
+      // eslint-disable-next-line no-await-in-loop
+      await transform(transformer, 'ts', filePath, options);
+    }
   }
 }
 
@@ -282,6 +291,7 @@ async function findGitIgnore(targetDir) {
  * --force   // force skip git checking (dangerously)
  * --cpus=1  // specify cpus cores to use
  * --extraScripts=v4-Icon-Outlined, blabla // add extra codemod scripts to run
+ * --flow // use flow syntax
  */
 
 async function bootstrap() {

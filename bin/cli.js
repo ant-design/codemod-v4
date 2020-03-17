@@ -10,6 +10,7 @@ const execa = require('execa');
 const isGitClean = require('is-git-clean');
 const updateCheck = require('update-check');
 const readPkgUp = require('read-pkg-up');
+const findUp = require('find-up');
 const semverSatisfies = require('semver/functions/satisfies');
 
 const jscodeshiftBin = require.resolve('.bin/jscodeshift');
@@ -102,6 +103,10 @@ function getRunnerArgs(
 
   args.push('--ignore-config', ignoreConfig);
 
+  if (options.gitignore) {
+    args.push('--ignore-config', options.gitignore);
+  }
+
   if (options.style) {
     args.push('--importStyles');
   }
@@ -120,13 +125,20 @@ async function run(filePath, args = {}) {
   }
 }
 
-async function transform(transformer, parser, globPath, options) {
+async function transform(transformer, parser, filePath, options) {
   console.log(chalk.bgGreen.bold('Transform'), transformer);
   const transformerPath = path.join(transformersDir, `${transformer}.js`);
 
-  const args = [globPath].concat(
-    getRunnerArgs(transformerPath, parser, options),
+  // pass closet .gitignore to jscodeshift as extra `--ignore-file` option
+  const gitignorePath = await findGitIgnore(filePath);
+
+  const args = [filePath].concat(
+    getRunnerArgs(transformerPath, parser, {
+      ...options,
+      gitignore: gitignorePath,
+    }),
   );
+
   try {
     if (process.env.NODE_ENV === 'local') {
       console.log(`Running jscodeshift with: ${args.join(' ')}`);
@@ -244,6 +256,11 @@ async function upgradeDetect(targetDir, needIcon, needCompatible) {
   );
 
   console.log(dependencies.map(n => `* ${n}`).join('\n'));
+}
+
+async function findGitIgnore(targetDir) {
+  const cwd = path.join(process.cwd(), targetDir);
+  return await findUp('.gitignore', { cwd });
 }
 
 /**

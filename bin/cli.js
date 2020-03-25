@@ -94,6 +94,10 @@ function getRunnerArgs(
   const cpus = options.cpus || Math.max(2, Math.ceil(os.cpus().length / 3));
   args.push('--cpus', cpus);
 
+  // https://github.com/facebook/jscodeshift/blob/master/src/Runner.js#L255
+  // https://github.com/facebook/jscodeshift/blob/master/src/Worker.js#L50
+  args.push('--no-babel');
+
   args.push('--parser', parser);
 
   args.push('--parser-config', babylonConfig);

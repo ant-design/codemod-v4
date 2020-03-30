@@ -134,12 +134,12 @@ async function transform(transformer, parser, filePath, options) {
   const transformerPath = path.join(transformersDir, `${transformer}.js`);
 
   // pass closet .gitignore to jscodeshift as extra `--ignore-file` option
-  const gitignorePath = await findGitIgnore(filePath);
+  // const gitignorePath = await findGitIgnore(filePath);
 
   const args = [filePath].concat(
     getRunnerArgs(transformerPath, parser, {
       ...options,
-      gitignore: gitignorePath,
+      // gitignore: gitignorePath,
     }),
   );
 

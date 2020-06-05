@@ -51,7 +51,7 @@
     "yargs-parser": "^16.1.0"
   },
   "devDependencies": {
-    "@umijs/fabric": "^1.1.10",
+    "@umijs/fabric": "^2.1.0",
     "coveralls": "^3.0.6",
     "cross-env": "^6.0.0",
     "enzyme": "^3.0.0",

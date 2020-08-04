@@ -55,7 +55,7 @@ async function ensureGitClean() {
   try {
     clean = await isGitClean();
   } catch (err) {
-    if (err && err.stderr && err.stderr.includes('Not a git repository')) {
+    if (err && err.stderr && err.stderr.toLowerCase().includes('not a git repository')) {
       clean = true;
     }
   }

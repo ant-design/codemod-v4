@@ -155,6 +155,51 @@ import { Modal } from 'antd';
   });
 ```
 
+### migrate your form v3 to v4
+
+You can auto migrate your `v3 form` by `antd4-codemod src --migrateform`, when execute this command, you should insure your already upgrade `antd v4`, also recommend your already execute above command.This scripts can't migrate all incompatible `api`, so if your codes aren't standard code(like `Form Form.Item`).We recommend you execute the command migrate form file one by one.When a file migrate, you should check incompatible `api`
+If `Form.Item` in your code is not a standard code, for example, alias `Form.Item` is `FormItem`, you can use `--formitem=FormItem` to rename `Form.Item`
+
+```diff
+
+- import { Form } from '@ant-design/compatible'; // remove compatible package
+- import '@ant-design/compatible/assets/index.css'; // if not includes compatible package, remove css
+
+
+-<Form className="login-form">
+-  <Form.Item>
+-    {getFieldDecorator('username', {
+-      rules: [{ required: true, message: 'Please input your username!' }],
+-      initialValue: 'antd',
+-    })(<Input />)}
++<Form
++  className="login-form"
++  initialValue={{
++    username: 'antd',
++    password: '123456'
++  }}>
++  <Form.Item
++    name='username'
++    rules={[{ required: true, message: 'Please input your username!' }]}>
++    <Input />
+   </Form.Item>
+   <div>
+-    {getFieldDecorator('password', {
+-      initialValue: '123456',
+-      rules: [{ required: true, message: 'Please input your Password!' }],
+-    })(<Input />)}
++    <Form.Item
++      noStyle
++      name='password'
++      rules={[{ required: true, message: 'Please input your Password!' }]}><Input /></Form.Item>
+   </div>
+ </Form>;
+
+- export default Form.create({})(Input) // remove Form.create
++ export default Input;
+
+```
+
 ## License
 
 MIT

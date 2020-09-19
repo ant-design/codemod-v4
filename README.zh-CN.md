@@ -155,6 +155,54 @@ import { Modal } from 'antd';
   });
 ```
 
+### migrate your form v3 to v4
+
+使用 `antd4-codemod src --migrateform` 来自动迁移你的旧版 `Form`，使用此命令时确保你已经升级到 v4，并且推荐已经执行上述其他迁移脚本。此脚本并不会帮你迁移所有不兼容的 `api`，所以如果不是标准写法的话(`Form Form.Item`)推荐对用此命令对单个文件边迁移边及时修改不兼容 `api`。
+
+如果 `Form.Item` 不是标准的写法，譬如可能自己封装过为 `FormItem`，使用 `--formitem=FormItem` 来指定新的 `Form.Item` 命名。
+
+```diff
+
+- import { Form } from '@ant-design/compatible'; // 去掉兼容包的导入
+- import '@ant-design/compatible/assets/index.css'; // 如果不在有兼容包，去除兼容包css
+
++ import { Form } from 'antd';
+
+-<Form className="login-form">
+-  <Form.Item>
+-    {getFieldDecorator('username', {
+-      rules: [{ required: true, message: 'Please input your username!' }],
+-      initialValue: 'antd',
+-    })(<Input />)}
++<Form
++  className="login-form"
++  initialValue={{
++    username: 'antd',
++    password: '123456'
++  }}>
++  <Form.Item
++    name='username'
++    rules={[{ required: true, message: 'Please input your username!' }]}>
++    <Input />
+   </Form.Item>
+   <div>
+-    {getFieldDecorator('password', {
+-      initialValue: '123456',
+-      rules: [{ required: true, message: 'Please input your Password!' }],
+-    })(<Input />)}
++    <Form.Item
++      noStyle
++      name='password'
++      rules={[{ required: true, message: 'Please input your Password!' }]}><Input /></Form.Item>
+   </div>
+ </Form>;
+
+
+- export default Form.create({})(Input) // 去除掉Form.create
++ export default Input;
+
+```
+
 ## License
 
 MIT

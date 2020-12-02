@@ -53,7 +53,7 @@
   "devDependencies": {
     "@umijs/fabric": "^2.1.0",
     "coveralls": "^3.0.6",
-    "cross-env": "^6.0.0",
+    "cross-env": "^7.0.3",
     "enzyme": "^3.0.0",
     "enzyme-to-json": "^3.4.0",
     "eslint": "^7.1.0",

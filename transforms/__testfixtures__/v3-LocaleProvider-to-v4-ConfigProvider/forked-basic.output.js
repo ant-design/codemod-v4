@@ -2,8 +2,8 @@ import { ConfigProvider } from '@forked/antd';
 
 const App = () => {
   return (
-    <ConfigProvider {...yourConfig}>
+    (<ConfigProvider {...yourConfig}>
       <Main />
-    </ConfigProvider>
+    </ConfigProvider>)
   );
 }

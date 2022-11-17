@@ -1,10 +1,4 @@
-jest.mock('../v3-typings-to-compatible', () => {
-  return Object.assign(require.requireActual('../v3-typings-to-compatible'), {
-    parser: 'babylon',
-  });
-});
-
-const defineSnapshotTest = require('jscodeshift/dist/testUtils')
+const defineSnapshotTest = require('jscodeshift/src/testUtils')
   .defineSnapshotTest;
 
 const testUnit = 'v3-typings-to-compatible';
@@ -17,6 +11,7 @@ describe(testUnit, () => {
     {},
     `import { FormComponentProps, WrappedFormUtils } from 'antd/es/form';`,
     'basic es import',
+    { parser: 'babylon' },
   );
 
   defineSnapshotTest(
@@ -24,6 +19,7 @@ describe(testUnit, () => {
     {},
     `import { FormComponentProps, WrappedFormUtils } from 'antd/lib/form';`,
     'basic lib import',
+    { parser: 'babylon' },
   );
 
   defineSnapshotTest(
@@ -31,6 +27,7 @@ describe(testUnit, () => {
     {},
     `import { FormComponentProps as AAFormProps, WrappedFormUtils as AAWrappedFormUtils } from 'antd/es/form';`,
     'alias import from es',
+    { parser: 'babylon' },
   );
 
   defineSnapshotTest(
@@ -38,6 +35,7 @@ describe(testUnit, () => {
     {},
     `import { FormComponentProps as AAFormProps, WrappedFormUtils as AAWrappedFormUtils } from 'antd/lib/form';`,
     'alias import from lib',
+    { parser: 'babylon' },
   );
 
   defineSnapshotTest(
@@ -45,6 +43,7 @@ describe(testUnit, () => {
     {},
     `import { FormComponentProps, FormItemProps, WrappedFormUtils } from 'antd/lib/form';`,
     'basic import: multi',
+    { parser: 'babylon' },
   );
 
   defineSnapshotTest(
@@ -52,5 +51,6 @@ describe(testUnit, () => {
     {},
     `import { FormComponentProps as AAFormProps, FormItemProps as AAFormItemProps } from 'antd/lib/form';`,
     'alias import: multi',
+    { parser: 'babylon' },
   );
 });

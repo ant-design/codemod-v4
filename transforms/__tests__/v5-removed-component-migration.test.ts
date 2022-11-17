@@ -1,8 +1,7 @@
-const tests = ['basic', 'forked-misc'];
+import { defineTest } from 'jscodeshift/src/testUtils';
 
-const defineTest = require('jscodeshift/src/testUtils').defineTest;
-
-const testUnit = 'v3-Modal-method-with-icon-to-v4';
+const testUnit = 'v5-removed-component-migration';
+const tests = ['alias-import'];
 
 describe(testUnit, () => {
   tests.forEach(test =>

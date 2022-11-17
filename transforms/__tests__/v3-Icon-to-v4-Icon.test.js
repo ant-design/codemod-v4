@@ -1,9 +1,3 @@
-jest.mock('../v3-Icon-to-v4-Icon', () => {
-  return Object.assign(require.requireActual('../v3-Icon-to-v4-Icon'), {
-    parser: 'babylon',
-  });
-});
-
 const tests = [
   'basic',
   'icon-static-methods',
@@ -13,7 +7,7 @@ const tests = [
   'forked-misc',
 ];
 
-const defineTest = require('jscodeshift/dist/testUtils').defineTest;
+const defineTest = require('jscodeshift/src/testUtils').defineTest;
 
 const testUnit = 'v3-Icon-to-v4-Icon';
 
@@ -28,6 +22,7 @@ describe(testUnit, () => {
         ),
       },
       `${testUnit}/${test}`,
+      { parser: 'babylon' },
     ),
   );
 });

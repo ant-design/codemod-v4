@@ -25,8 +25,8 @@ ReactDOM.render(
 
 const CustomAvatar = (props) => {
   return (
-    <Badge count={1}>
+    (<Badge count={1}>
       <Avatar shape="square" icon={<LegacyIcon type={props.icon} />} />
-    </Badge>
+    </Badge>)
   );
 }

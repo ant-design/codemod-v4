@@ -8,8 +8,8 @@ const {
 const { markDependency } = require('./utils/marker');
 
 const removedComponentMap = {
-  'Comment': '@ant-design/compatible',
-  'PageHeader': '@ant-design/pro-components',
+  Comment: '@ant-design/compatible',
+  PageHeader: '@ant-design/pro-components',
 };
 
 module.exports = (file, api, options) => {
@@ -17,12 +17,13 @@ module.exports = (file, api, options) => {
   const root = j(file.source);
   const antdPkgNames = parseStrToArray(options.antdPkgNames || 'antd');
 
-  // import deprecated components from '@ant-design/compatible'
+  // import { Comment } from '@ant-design/compatible'
+  // import { PageHeader } from '@ant-design/pro-components'
   function importDeprecatedComponent(j, root) {
     let hasChanged = false;
 
-    // import { Form, Mention } from 'antd';
-    // import { Form, Mention } from '@forked/antd';
+    // import { Comment, PageHeader } from 'antd';
+    // import { Comment, PageHeader } from '@forked/antd';
     root
       .find(j.Identifier)
       .filter(
@@ -54,7 +55,7 @@ module.exports = (file, api, options) => {
             localName: localComponentName,
             before: antdPkgName,
           });
-  
+
           addStyleModuleImport(j, root, {
             moduleName: '@ant-design/compatible/assets/index.css',
             after: '@ant-design/compatible',

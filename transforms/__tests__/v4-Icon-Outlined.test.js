@@ -1,12 +1,6 @@
-jest.mock('../v4-Icon-Outlined', () => {
-  return Object.assign(require.requireActual('../v4-Icon-Outlined'), {
-    parser: 'babylon',
-  });
-});
-
 const tests = ['basic', 'alias-import'];
 
-const defineTest = require('jscodeshift/dist/testUtils').defineTest;
+const defineTest = require('jscodeshift/src/testUtils').defineTest;
 
 const testUnit = 'v4-Icon-Outlined';
 
@@ -17,6 +11,7 @@ describe(testUnit, () => {
       testUnit,
       { antdPkgNames: ['antd', '@forked/antd'].join(',') },
       `${testUnit}/${test}`,
+      { parser: 'babylon' },
     ),
   );
 });

@@ -9,7 +9,7 @@ const { markDependency } = require('./utils/marker');
 
 const removedComponentMap = {
   Comment: '@ant-design/compatible',
-  PageHeader: '@ant-design/pro-components',
+  PageHeader: '@ant-design/pro-layout',
 };
 
 module.exports = (file, api, options) => {

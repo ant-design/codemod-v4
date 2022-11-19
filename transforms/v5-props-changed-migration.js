@@ -19,13 +19,6 @@ const changedComponentPropsMap = {
       replacer: 'popupClassName',
     },
   },
-  // TODO: support compound component
-  DatePicker: {
-    dropdownClassName: {
-      action: 'rename',
-      replacer: 'popupClassName',
-    },
-  },
   Select: {
     dropdownClassName: {
       action: 'rename',
@@ -38,24 +31,41 @@ const changedComponentPropsMap = {
       replacer: 'popupClassName',
     },
   },
+  // 处理 compound components: TimePicker.RangePicker
   TimePicker: {
     dropdownClassName: {
       action: 'rename',
       replacer: 'popupClassName',
     },
   },
-  Tag: {
-    visible: {
-      action: 'remove',
+  // 处理 compound components: DatePicker.RangePicker
+  DatePicker: {
+    dropdownClassName: {
+      action: 'rename',
+      replacer: 'popupClassName',
     },
   },
-  Modal: {
+  Mentions: {
+    dropdownClassName: {
+      action: 'rename',
+      replacer: 'popupClassName',
+    },
+  },
+  Drawer: {
     visible: {
       action: 'rename',
       replacer: 'open',
     },
+    className: {
+      action: 'rename',
+      replacer: 'rootClassName',
+    },
+    style: {
+      action: 'rename',
+      replacer: 'rootStyle',
+    },
   },
-  Tooltip: {
+  Modal: {
     visible: {
       action: 'rename',
       replacer: 'open',
@@ -67,16 +77,15 @@ const changedComponentPropsMap = {
       replacer: 'open',
     },
   },
-  Drawer: {
+  Tooltip: {
     visible: {
       action: 'rename',
       replacer: 'open',
     },
   },
-  Table: {
-    filterDropdownVisible: {
-      action: 'rename',
-      replacer: 'filterDropdownOpen',
+  Tag: {
+    visible: {
+      action: 'remove',
     },
   },
   Slider: {
@@ -91,6 +100,12 @@ const changedComponentPropsMap = {
     tooltipVisible: {
       action: 'rename',
       replacer: 'tooltip.open',
+    },
+  },
+  Table: {
+    filterDropdownVisible: {
+      action: 'rename',
+      replacer: 'filterDropdownOpen',
     },
   },
 };

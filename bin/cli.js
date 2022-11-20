@@ -55,7 +55,11 @@ async function ensureGitClean() {
   try {
     clean = await isGitClean();
   } catch (err) {
-    if (err && err.stderr && err.stderr.toLowerCase().includes('not a git repository')) {
+    if (
+      err &&
+      err.stderr &&
+      err.stderr.toLowerCase().includes('not a git repository')
+    ) {
       clean = true;
     }
   }
@@ -147,10 +151,13 @@ async function transform(transformer, parser, filePath, options) {
     if (process.env.NODE_ENV === 'local') {
       console.log(`Running jscodeshift with: ${args.join(' ')}`);
     }
+    // js part
     await execa(jscodeshiftBin, args, {
       stdio: 'inherit',
       stripEof: false,
     });
+    // less part
+    // `@antd/xxxx` | `~@antd/xxxx`
   } catch (err) {
     console.error(err);
     if (process.env.NODE_ENV === 'local') {
@@ -230,7 +237,7 @@ async function upgradeDetect(targetDir, needIcon, needCompatible) {
         const versionRange = _.get(packageJson, `${property}.${depName}`);
         /**
          * we may have dependencies in `package.json`
-         * make sure that they can `work well` with `antd4`
+         * make sure that they can `work well` with `antd5`
          * so we check dependency's version here
          */
         if (!!versionRange && !semverSatisfies(expectVersion, versionRange)) {
@@ -247,7 +254,7 @@ async function upgradeDetect(targetDir, needIcon, needCompatible) {
 
   console.log(
     chalk.yellow(
-      "It's recommended to install or upgrade these dependencies to ensure working well with antd4\n",
+      "It's recommended to install or upgrade these dependencies to ensure working well with antd v5\n",
     ),
   );
   console.log(`> package.json file:  ${pkgJsonPath} \n`);
@@ -311,7 +318,7 @@ async function bootstrap() {
   try {
     const output = await summary.output();
     if (Array.isArray(output) && output.length) {
-      console.log('----------- antd4 codemod diagnosis -----------\n');
+      console.log('----------- antd5 codemod diagnosis -----------\n');
       output
         .filter(n => Array.isArray(n) && n.length >= 3)
         .forEach(n => {
@@ -323,7 +330,7 @@ async function bootstrap() {
         });
     }
 
-    console.log('----------- antd4 dependencies alert -----------\n');
+    console.log('----------- antd5 dependencies alert -----------\n');
     const dependenciesMarkers = await marker.output();
     const needIcon = dependenciesMarkers['@ant-design/icons'];
     const needCompatible = dependenciesMarkers['@ant-design/compatible'];

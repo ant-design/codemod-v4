@@ -1,0 +1,70 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Transform",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "program": "${workspaceRoot}/node_modules/.bin/jscodeshift",
+      "stopOnEntry": false,
+      "args": [
+        "--dry",
+        "--print",
+        "-t",
+        "${input:transformFile}",
+        "--parser",
+        "${input:parser}",
+        "--run-in-band",
+        "${file}"
+      ],
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "console": "internalConsole",
+      "sourceMaps": true,
+      "outFiles": []
+    },
+    {
+      "name": "Debug All JSCodeshift Jest Tests",
+      "type": "node",
+      "request": "launch",
+      "runtimeArgs": [
+        "--inspect-brk",
+        "${workspaceRoot}/node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--testPathPattern=${fileBasenameNoExtension}"
+      ],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    }
+  ],
+  "inputs": [
+    {
+      "type": "pickString",
+      "id": "parser",
+      "description": "jscodeshift parser",
+      "options": [
+        "babel",
+        "babylon",
+        "flow",
+        "ts",
+        "tsx",
+      ],
+      "default": "babel"
+    },
+    {
+      "type": "promptString",
+      "id": "transformFile",
+      "description": "jscodeshift transform file",
+      "default": "transform.js"
+    }
+  ]
+}

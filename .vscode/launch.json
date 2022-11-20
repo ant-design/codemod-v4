@@ -38,6 +38,13 @@
       "cwd": "${workspaceFolder}/es",
       "args": ["run", "--dir=*.js", "--parser=babylon", "--style"],
       "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "Launch Program",
+      "args": ["${relativeFile}"],
+      "request": "launch",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node"
     }
   ]
 }

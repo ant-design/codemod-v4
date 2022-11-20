@@ -1,6 +1,9 @@
 import { defineTest } from 'jscodeshift/src/testUtils';
 
-const tests = ['basic'];
+const tests = [
+  // 'basic',
+  'compound',
+];
 
 const testUnit = 'v5-props-changed-migration';
 

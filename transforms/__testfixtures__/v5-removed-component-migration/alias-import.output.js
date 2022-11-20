@@ -1,6 +1,6 @@
 import { Comment as AntdComment } from '@ant-design/compatible';
 import '@ant-design/compatible/assets/index.css';
-import { PageHeader } from '@ant-design/pro-components';
+import { PageHeader } from '@ant-design/pro-layout';
 import { Avatar, Tooltip } from 'antd';
 import { DislikeFilled, DislikeOutlined, LikeFilled, LikeOutlined } from '@ant-design/icons';
 import React, { createElement, useState } from 'react';

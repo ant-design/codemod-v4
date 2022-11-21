@@ -1,18 +1,19 @@
-const testAntdImportRegex = /(?:\(.+\)\s+)?(?:"|').+(~?antd\/.+\.less)(?:"|')$/;
-
-function checkImportAntd(params) {
-  return params.includes('antd') && testAntdImportRegex.test(params);
-}
+const testAntdImportRegex = /(?:\(.+\)\s+)?(?:"|').+(~?antd\/.+\.less)(?:"|');?$/;
 
 module.exports = (opts = {}) => {
   return {
     postcssPlugin: 'postcss-plugin-remove-antd-less',
     AtRule: {
-      import: atRule => {
-        if (checkImportAntd(atRule.params)) {
-          // 直接 replaceWith 会导致无限循环
-          // atRule.replaceWith(atRule.clone({ raws: { before: '//' } }));
-          atRule.remove();
+      import(atRule, { postcss }) {
+        // handle forked antd
+        if (atRule.params.includes('antd')) {
+          const params = atRule.params.replace(atRule.options || '', '');
+          if (testAntdImportRegex.test(params)) {
+            const commentedRule = postcss.comment({
+              text: `${atRule.toString()};`,
+            });
+            atRule.replaceWith(commentedRule);
+          }
         }
       },
     },

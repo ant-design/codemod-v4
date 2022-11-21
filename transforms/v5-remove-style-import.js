@@ -46,6 +46,7 @@ module.exports = (file, api, options) => {
       .forEach(path => {
         hasChanged = true;
         j(path).replaceWith(path => {
+          // 不加空行会导致无法执行 root.toSource()
           const empty = j.emptyStatement();
           empty.comments = [j.commentLine(j(path.node).toSource())];
           return empty;

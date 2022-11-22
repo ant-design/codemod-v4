@@ -5,12 +5,14 @@ const globAsync = promisify(glob);
 
 const { transformFile } = require('./transform');
 
-module.exports = async () => {
-  const files = await globAsync(`**/*.less`, {
+module.exports = async (dir, options = {}) => {
+  const { ignore = ['**/node_modules/**', '**/dist/**'] } = options;
+
+  const files = await globAsync(`${dir}/**/*.less`, {
+    ignore,
     // cwd:,
-    ignore: ['**/node_modules/**', '**/dist/**'],
   });
   for (const file of files) {
-    transformFile(file);
+    await transformFile(file);
   }
 };

@@ -6,10 +6,10 @@
     "version": "4.0.0"
   },
   "@ant-design/compatible": {
-    "version": "1.0.0"
+    "version": "5.0.0"
   },
   "@ant-design/pro-layout": {
-    "version": "5.0.0"
+    "version": "7.0.0"
   },
   "@alipay/techui-form": {
     "version": "2.2.1"

@@ -20,6 +20,8 @@ const marker = require('../transforms/utils/marker');
 const pkg = require('../package.json');
 const pkgUpgradeList = require('./upgrade-list');
 
+const transformLess = require('../less-transforms');
+
 // jscodeshift codemod scripts dir
 const transformersDir = path.join(__dirname, '../transforms');
 
@@ -131,6 +133,12 @@ async function run(filePath, args = {}) {
     // eslint-disable-next-line no-await-in-loop
     await transform(transformer, 'babylon', filePath, args);
   }
+
+  await lessTransform(filePath, args);
+}
+
+async function lessTransform(filePath, options) {
+  return await transformLess(filePath);
 }
 
 async function transform(transformer, parser, filePath, options) {

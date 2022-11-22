@@ -15,7 +15,7 @@ exports.transform = async (content, opts = {}) => {
 exports.transformFile = async filename => {
   const content = await fs.promises.readFile(filename, 'utf8');
 
-  const result = exports.transform(content, { from: filename });
+  const result = await exports.transform(content, { from: filename });
 
   return await fs.promises.writeFile(filename, result, 'utf8');
 };

@@ -1,11 +1,11 @@
 English | [简体中文](./README.zh-CN.md)
 
-# Ant Design v4 Codemod
+# Ant Design v5 Codemod
 
-A collection of codemod scripts that help upgrade antd v4 using [jscodeshift](https://github.com/facebook/jscodeshift).(Inspired by [react-codemod](https://github.com/reactjs/react-codemod))
+A collection of codemod scripts that help upgrade antd v5 using [jscodeshift](https://github.com/facebook/jscodeshift).(Inspired by [react-codemod](https://github.com/reactjs/react-codemod))
 
-[![NPM version](https://img.shields.io/npm/v/@ant-design/codemod-v4.svg?style=flat)](https://npmjs.org/package/@ant-design/codemod-v4)
-[![NPM downloads](http://img.shields.io/npm/dm/@ant-design/codemod-v4.svg?style=flat)](https://npmjs.org/package/@ant-design/codemod-v4)
+[![NPM version](https://img.shields.io/npm/v/@ant-design/codemod-v5.svg?style=flat)](https://npmjs.org/package/@ant-design/codemod-v5)
+[![NPM downloads](http://img.shields.io/npm/dm/@ant-design/codemod-v5.svg?style=flat)](https://npmjs.org/package/@ant-design/codemod-v5)
 [![Github Action](https://github.com/ant-design/codemod-v5/actions/workflows/test.yml/badge.svg)](https://github.com/ant-design/codemod-v5/actions/workflows/test.yml)
 
 ## Usage
@@ -14,13 +14,13 @@ Before run codemod scripts, you'd better make sure to commit your local git chan
 
 ```shell
 # global installation
-npm i -g @ant-design/codemod-v4
+npm i -g @ant-design/codemod-v5
 # or for yarn user
-#  yarn global add @ant-design/codemod-v4
+#  yarn global add @ant-design/codemod-v5
 antd4-codemod src
 
 # use npx
-npx -p @ant-design/codemod-v4 antd4-codemod src
+npx -p @ant-design/codemod-v5 antd4-codemod src
 ```
 
 ## Codemod scripts introduction
@@ -52,9 +52,9 @@ Replace deprecated `Form` and `Mention` from `@ant-design/compatible`:
   );
 ```
 
-#### `v3-component-with-string-icon-props-to-v4`
+#### `v3-component-with-string-icon-props-to-v5`
 
-Update component which contains string icon props with specific v4 Icon component from `@ant-design/icons`.
+Update component which contains string icon props with specific v5 Icon component from `@ant-design/icons`.
 
 ```diff
   import { Avatar, Button, Result } from 'antd';
@@ -78,9 +78,9 @@ Update component which contains string icon props with specific v4 Icon componen
 
 ```
 
-#### `v3-Icon-to-v4-Icon`
+#### `v3-Icon-to-v5-Icon`
 
-Replace v3 Icon with specific v4 Icon component.
+Replace v3 Icon with specific v5 Icon component.
 
 ```diff
 - import { Icon, Input } from 'antd';
@@ -115,9 +115,9 @@ Replace v3 Icon with specific v4 Icon component.
 
 ```
 
-#### `v3-LocaleProvider-to-v4-ConfigProvider`
+#### `v3-LocaleProvider-to-v5-ConfigProvider`
 
-Replace v3 LocaleProvider with v4 ConfigProvider component.
+Replace v3 LocaleProvider with v5 ConfigProvider component.
 
 ```diff
 - import { LocaleProvider } from 'antd';
@@ -133,9 +133,9 @@ Replace v3 LocaleProvider with v4 ConfigProvider component.
   );
 ```
 
-#### `v3-Modal-method-with-icon-to-v4`
+#### `v3-Modal-method-with-icon-to-v5`
 
-Update `Modal.method()` which contains string icon property with specific v4 Icon component.
+Update `Modal.method()` which contains string icon property with specific v5 Icon component.
 
 ```diff
 import { Modal } from 'antd';

@@ -287,7 +287,6 @@ async function findGitIgnore(targetDir) {
  * options
  * --force   // force skip git checking (dangerously)
  * --cpus=1  // specify cpus cores to use
- * --extraScripts=v4-Icon-Outlined, blabla // add extra codemod scripts to run
  */
 
 async function bootstrap() {

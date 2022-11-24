@@ -1,26 +1,26 @@
 [English](./README.md) | 简体中文
 
-# Ant Design v4 Codemod
+# Ant Design 5 Codemod
 
-一组帮助你升级到 antd v4 的 codemod 脚本集合，基于 [jscodeshift](https://github.com/facebook/jscodeshift) 构建。(受 [react-codemod](https://github.com/reactjs/react-codemod) 启发)
+一组帮助你升级到 antd 5 的 codemod 脚本集合，基于 [jscodeshift](https://github.com/facebook/jscodeshift) 构建。(受 [react-codemod](https://github.com/reactjs/react-codemod) 启发)
 
-[![NPM version](https://img.shields.io/npm/v/@ant-design/codemod-v4.svg?style=flat)](https://npmjs.org/package/@ant-design/codemod-v4)
-[![NPM downloads](http://img.shields.io/npm/dm/@ant-design/codemod-v4.svg?style=flat)](https://npmjs.org/package/@ant-design/codemod-v4)
-[![CircleCI](https://circleci.com/gh/ant-design/codemod-v4.svg?style=svg)](https://circleci.com/gh/ant-design/codemod-v4)
+[![NPM version](https://img.shields.io/npm/v/@ant-design/codemod-5.svg?style=flat)](https://npmjs.org/package/@ant-design/codemod-5)
+[![NPM downloads](http://img.shields.io/npm/dm/@ant-design/codemod-5.svg?style=flat)](https://npmjs.org/package/@ant-design/codemod-5)
+[![Github Action](https://github.com/ant-design/codemod-v5/actions/workflows/test.yml/badge.svg)](https://github.com/ant-design/codemod-v5/actions/workflows/test.yml)
 
 ## 使用
 
-在运行 codemode 脚本前，请先提交你的本地代码修改。
+在运行 codemod 脚本前，请先提交你的本地代码修改。
 
 ```shell
 # 全局安装
-npm i -g @ant-design/codemod-v4
+npm i -g @ant-design/codemod-5
 # or for yarn user
-#  yarn global add @ant-design/codemod-v4
+#  yarn global add @ant-design/codemod-5
 antd4-codemod src
 
 # 使用 npx
-npx -p @ant-design/codemod-v4 antd4-codemod src
+npx -p @ant-design/codemod-5 antd4-codemod src
 ```
 
 ## Codemod 脚本包括:
@@ -52,7 +52,7 @@ npx -p @ant-design/codemod-v4 antd4-codemod src
   );
 ```
 
-#### `v3-component-with-string-icon-props-to-v4`
+#### `v3-component-with-string-icon-props-to-5`
 
 将那些包含字符串 icon props 的组件转换成从 `@ant-design/icons` 中特定组件引入。
 
@@ -78,7 +78,7 @@ npx -p @ant-design/codemod-v4 antd4-codemod src
 
 ```
 
-#### `v3-Icon-to-v4-Icon`
+#### `v3-Icon-to-5-Icon`
 
 将 v3 Icon 组件转换成 `@ant-design/icons` 中特定组件引入。
 
@@ -115,9 +115,9 @@ npx -p @ant-design/codemod-v4 antd4-codemod src
 
 ```
 
-#### `v3-LocaleProvider-to-v4-ConfigProvider`
+#### `v3-LocaleProvider-to-5-ConfigProvider`
 
-将 v3 LocaleProvider 组件转换成 v4 ConfigProvider 组件。
+将 v3 LocaleProvider 组件转换成 5 ConfigProvider 组件。
 
 ```diff
 - import { LocaleProvider } from 'antd';
@@ -133,7 +133,7 @@ npx -p @ant-design/codemod-v4 antd4-codemod src
   );
 ```
 
-#### `v3-Modal-method-with-icon-to-v4`
+#### `v3-Modal-method-with-icon-to-5`
 
 将 `Modal.method()` 包含字符串 icon 属性的调用转换成从 `@ant-design/icons` 中特定组件引入。
 

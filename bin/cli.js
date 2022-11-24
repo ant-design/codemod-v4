@@ -20,6 +20,8 @@ const marker = require('../transforms/utils/marker');
 const pkg = require('../package.json');
 const pkgUpgradeList = require('./upgrade-list');
 
+const transformLess = require('../less-transforms');
+
 // jscodeshift codemod scripts dir
 const transformersDir = path.join(__dirname, '../transforms');
 
@@ -31,15 +33,9 @@ const babylonConfig = path.join(__dirname, './babylon.config.json');
 const ignoreConfig = path.join(__dirname, './codemod.ignore');
 
 const transformers = [
-  // TODO: 考虑大多数项目并没有直接使用新版本的 `@antd-design/icons`
-  // 该项 codemod script 如需使用请通过 extraScripts 传入
-  // 'v4-Icon-Outlined',
-  'v3-Icon-to-v4-Icon',
-  'v3-Modal-method-with-icon-to-v4',
-  'v3-component-with-string-icon-props-to-v4',
-  'v3-Component-to-compatible',
-  'v3-LocaleProvider-to-v4-ConfigProvider',
-  'v3-typings-to-compatible',
+  'v5-props-changed-migration',
+  'v5-removed-component-migration',
+  'v5-remove-style-import',
 ];
 
 const dependencyProperties = [
@@ -55,7 +51,11 @@ async function ensureGitClean() {
   try {
     clean = await isGitClean();
   } catch (err) {
-    if (err && err.stderr && err.stderr.toLowerCase().includes('not a git repository')) {
+    if (
+      err &&
+      err.stderr &&
+      err.stderr.toLowerCase().includes('not a git repository')
+    ) {
       clean = true;
     }
   }
@@ -83,6 +83,11 @@ async function checkUpdates() {
   }
 }
 
+function getMaxWorkers(options = {}) {
+  // limit usage for cpus
+  return options.cpus || Math.max(2, Math.ceil(os.cpus().length / 3));
+}
+
 function getRunnerArgs(
   transformerPath,
   parser = 'babylon', // use babylon as default parser
@@ -91,7 +96,7 @@ function getRunnerArgs(
   const args = ['--verbose=2', '--ignore-pattern=**/node_modules'];
 
   // limit usage for cpus
-  const cpus = options.cpus || Math.max(2, Math.ceil(os.cpus().length / 3));
+  const cpus = getMaxWorkers(options);
   args.push('--cpus', cpus);
 
   // https://github.com/facebook/jscodeshift/blob/master/src/Runner.js#L255
@@ -127,6 +132,13 @@ async function run(filePath, args = {}) {
     // eslint-disable-next-line no-await-in-loop
     await transform(transformer, 'babylon', filePath, args);
   }
+
+  await lessTransform(filePath, args);
+}
+
+async function lessTransform(filePath, options) {
+  const maxWorkers = getMaxWorkers(options);
+  return await transformLess(filePath, { maxWorkers });
 }
 
 async function transform(transformer, parser, filePath, options) {
@@ -147,10 +159,13 @@ async function transform(transformer, parser, filePath, options) {
     if (process.env.NODE_ENV === 'local') {
       console.log(`Running jscodeshift with: ${args.join(' ')}`);
     }
+    // js part
     await execa(jscodeshiftBin, args, {
       stdio: 'inherit',
       stripEof: false,
     });
+    // less part
+    // `@antd/xxxx` | `~@antd/xxxx`
   } catch (err) {
     console.error(err);
     if (process.env.NODE_ENV === 'local') {
@@ -230,7 +245,7 @@ async function upgradeDetect(targetDir, needIcon, needCompatible) {
         const versionRange = _.get(packageJson, `${property}.${depName}`);
         /**
          * we may have dependencies in `package.json`
-         * make sure that they can `work well` with `antd4`
+         * make sure that they can `work well` with `antd5`
          * so we check dependency's version here
          */
         if (!!versionRange && !semverSatisfies(expectVersion, versionRange)) {
@@ -247,7 +262,7 @@ async function upgradeDetect(targetDir, needIcon, needCompatible) {
 
   console.log(
     chalk.yellow(
-      "It's recommended to install or upgrade these dependencies to ensure working well with antd4\n",
+      "It's recommended to install or upgrade these dependencies to ensure working well with antd v5\n",
     ),
   );
   console.log(`> package.json file:  ${pkgJsonPath} \n`);
@@ -311,7 +326,7 @@ async function bootstrap() {
   try {
     const output = await summary.output();
     if (Array.isArray(output) && output.length) {
-      console.log('----------- antd4 codemod diagnosis -----------\n');
+      console.log('----------- antd5 codemod diagnosis -----------\n');
       output
         .filter(n => Array.isArray(n) && n.length >= 3)
         .forEach(n => {
@@ -323,7 +338,7 @@ async function bootstrap() {
         });
     }
 
-    console.log('----------- antd4 dependencies alert -----------\n');
+    console.log('----------- antd5 dependencies alert -----------\n');
     const dependenciesMarkers = await marker.output();
     const needIcon = dependenciesMarkers['@ant-design/icons'];
     const needCompatible = dependenciesMarkers['@ant-design/compatible'];

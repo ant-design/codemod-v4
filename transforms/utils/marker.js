@@ -5,18 +5,12 @@ const path = require('path');
 
 const encoding = 'utf8';
 
-const iconMarkerPath = path.join(
-  require('os').tmpdir(),
-  './antd-v4-icon.marker.txt',
-);
-
 const compatibleMarkerPath = path.join(
   require('os').tmpdir(),
-  './antd4-v4-compatible.marker.txt',
+  './ant-design-compatible-v5.marker.txt',
 );
 
 const dependencyMarkerPathMap = {
-  '@ant-design/icons': iconMarkerPath,
   '@ant-design/compatible': compatibleMarkerPath,
 };
 

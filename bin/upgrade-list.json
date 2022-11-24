@@ -1,21 +1,15 @@
 {
   "antd": {
-    "version": "4.0.0"
+    "version": "5.0.0"
   },
   "@ant-design/icons": {
     "version": "4.0.0"
   },
   "@ant-design/compatible": {
-    "version": "1.0.0"
-  },
-  "@ant-design/pro-layout": {
     "version": "5.0.0"
   },
-  "@alipay/techui-form": {
-    "version": "2.2.1"
-  },
-  "@alipay/tech-ui": {
-    "version": "1.14.0"
+  "@ant-design/pro-layout": {
+    "version": "7.0.0"
   },
   "react": {
     "version": "16.9.0"

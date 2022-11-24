@@ -6,7 +6,7 @@ A collection of codemod scripts that help upgrade antd v4 using [jscodeshift](ht
 
 [![NPM version](https://img.shields.io/npm/v/@ant-design/codemod-v4.svg?style=flat)](https://npmjs.org/package/@ant-design/codemod-v4)
 [![NPM downloads](http://img.shields.io/npm/dm/@ant-design/codemod-v4.svg?style=flat)](https://npmjs.org/package/@ant-design/codemod-v4)
-[![Github Action](https://github.com/@ant-design/codemod-v4/actions/workflows/test.yml/badge.svg)](https://github.com/@ant-design/codemod-v4/actions/workflows/test.yml)
+[![Github Action](https://github.com/ant-design/codemod-v5/actions/workflows/test.yml/badge.svg)](https://github.com/ant-design/codemod-v5/actions/workflows/test.yml)
 
 ## Usage
 

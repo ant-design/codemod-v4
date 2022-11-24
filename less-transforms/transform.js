@@ -17,5 +17,9 @@ exports.transformFile = async filename => {
 
   const result = await exports.transform(content, { from: filename });
 
-  return await fs.promises.writeFile(filename, result, 'utf8');
+  const changed = result.length !== content.length;
+  if (changed) {
+    await fs.promises.writeFile(filename, result, 'utf8');
+  }
+  return changed;
 };

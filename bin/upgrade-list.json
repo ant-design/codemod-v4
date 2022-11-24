@@ -11,12 +11,6 @@
   "@ant-design/pro-layout": {
     "version": "7.0.0"
   },
-  "@alipay/techui-form": {
-    "version": "2.2.1"
-  },
-  "@alipay/tech-ui": {
-    "version": "1.14.0"
-  },
   "react": {
     "version": "16.9.0"
   },

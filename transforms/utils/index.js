@@ -212,6 +212,23 @@ function parseStrToArray(antdPkgNames) {
     .map(n => n.trim());
 }
 
+function removeUnusedCompatiblecss(j, root) {
+  const isCompatibleAllRemoved = !root.find(j.ImportDeclaration, {
+    source: {
+      value: '@ant-design/compatible',
+    },
+  }).length;
+  if (isCompatibleAllRemoved) {
+    root
+      .find(j.ImportDeclaration, {
+        source: {
+          value: '@ant-design/compatible/assets/index.css',
+        },
+      })
+      .replaceWith();
+  }
+}
+
 module.exports = {
   parseStrToArray,
   addModuleDefaultImport,
@@ -219,4 +236,5 @@ module.exports = {
   addSubmoduleImport,
   removeEmptyModuleImport,
   useVar,
+  removeUnusedCompatiblecss,
 };

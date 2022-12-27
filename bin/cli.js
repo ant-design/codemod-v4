@@ -26,6 +26,10 @@ const transformersDir = path.join(__dirname, '../transforms');
 // override default babylon parser config to enable `decorator-legacy`
 // https://github.com/facebook/jscodeshift/blob/master/parser/babylon.js
 const babylonConfig = path.join(__dirname, './babylon.config.json');
+const babylonTsOnlyConfig = path.join(
+  __dirname,
+  './babylon-ts-only.config.json',
+);
 
 // jscodeshift bin#--ignore-config
 const ignoreConfig = path.join(__dirname, './codemod.ignore');
@@ -100,8 +104,13 @@ function getRunnerArgs(
 
   args.push('--parser', parser);
 
-  args.push('--parser-config', babylonConfig);
-  args.push('--extensions=tsx,ts,jsx,js');
+  if (parser === 'ts') {
+    args.push('--parser-config', babylonTsOnlyConfig);
+    args.push('--extensions=ts');
+  } else {
+    args.push('--parser-config', babylonConfig);
+    args.push('--extensions=tsx,jsx,js');
+  }
 
   args.push('--transform', transformerPath);
 
@@ -119,13 +128,17 @@ function getRunnerArgs(
   return args;
 }
 
-async function run(filePath, args = {}) {
-  const extraScripts = args.extraScripts ? args.extraScripts.split(',') : [];
+async function run(filePath, options = {}) {
+  const extraScripts = options.extraScripts
+    ? options.extraScripts.split(',')
+    : [];
 
   // eslint-disable-next-line no-restricted-syntax
   for (const transformer of transformers.concat(extraScripts)) {
     // eslint-disable-next-line no-await-in-loop
-    await transform(transformer, 'babylon', filePath, args);
+    await transform(transformer, 'babylon', filePath, options);
+    // eslint-disable-next-line no-await-in-loop
+    await transform(transformer, 'ts', filePath, options);
   }
 }
 
@@ -278,12 +291,12 @@ async function findGitIgnore(targetDir) {
 async function bootstrap() {
   const dir = process.argv[2];
   // eslint-disable-next-line global-require
-  const args = require('yargs-parser')(process.argv.slice(3));
+  const options = require('yargs-parser')(process.argv.slice(3));
   if (process.env.NODE_ENV !== 'local') {
     // check for updates
     await checkUpdates();
     // check for git status
-    if (!args.force) {
+    if (!options.force) {
       await ensureGitClean();
     } else {
       console.log(
@@ -306,7 +319,7 @@ async function bootstrap() {
   }
   await summary.start();
   await marker.start();
-  await run(dir, args);
+  await run(dir, options);
 
   try {
     const output = await summary.output();
